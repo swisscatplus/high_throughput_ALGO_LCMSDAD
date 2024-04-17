@@ -9,6 +9,7 @@ from netCDF4 import Dataset
 import initialize as init
 import create_file
 import data_processing_dad as dpr_dad
+import ms_deconvolution as msd
 
 def process_deconvoluted_peak(ms_spectrum, dad_spectrum, method, settings):
     """
@@ -310,15 +311,25 @@ def create_new_background_spectra(background_filepath, method_name, settings):
 
     background_chr_ms = MS_full_chr(background_full_analysis.ms_data3d\
                                     , init.import_full_chr_info(background=True))
-    background_chr_ms.chr_info["LC Method"] = method_name  # Later parse this directly is possible
+    background_chr_ms.chr_info["LC Method"] = method_name  # Later parse this directly is possible (?)
 
     if background_chr_ms.chr_info["Background"] == False:
         print("The file " + background_filepath + " is not a background spectrum.")
         return
 
+    background_folder = os.path.join(settings["directory_project"], "Data_examples", "background_spectra")
+    file_name = os.path.join(background_folder, (background_chr_ms.chr_info["LC Method"] + ".cdf"))
+
+    background_list = os.listdir(background_folder)
+    if (background_chr_ms.chr_info["LC Method"] + ".cdf") in background_list:
+        print("The method " + background_chr_ms.chr_info["LC Method"] + " already exists!")
+        return
+
+    background_masses_list = msd.determine_background_masses_list(background_full_analysis, background_chr_ms, settings)
+
     begin_t_msr = 0 #  later define this as the difference in measurment time, until fraction arrives at ms (?)
     end_t_msr = background_chr_ms.data["time"][-1]
-    background_ms = background_chr_ms.extract_ms_timespan(begin_t_msr, end_t_msr)
+    background_ms = background_chr_ms.extract_ms_timespan(begin_t_msr, end_t_msr)  # Change data depending on polarization!
     background_ms.raw_data = background_ms.data.copy()
 
     background_ms.noise_removal_threshold(settings)
@@ -335,14 +346,6 @@ def create_new_background_spectra(background_filepath, method_name, settings):
 
     # possibly pre-process dad background data here
 
-    background_folder = os.path.join(settings["directory_project"], "Data_examples", "background_spectra")
-    file_name = os.path.join(background_folder, (background_chr_ms.chr_info["LC Method"] + ".cdf"))
-
-    background_list = os.listdir(background_folder)
-    if (background_chr_ms.chr_info["LC Method"] + ".cdf") in background_list:
-        print("The method " + background_chr_ms.chr_info["LC Method"] + " already exists!")
-        return
-
     background_file = Dataset(file_name, 'w', format='NETCDF4')
 
     background_file.Method = background_chr_ms.chr_info["LC Method"]
@@ -355,6 +358,9 @@ def create_new_background_spectra(background_filepath, method_name, settings):
     grp_dad = background_file.createGroup("DAD Data")
 
     mass = grp_ms.createDimension("mass", None)
+    mass_list_dim = grp_ms.createDimension("Background masses dim", len(background_masses_list))
+    mass_list = grp_ms.createVariable("Background masses list", "f8", mass_list_dim)
+    mass_list[:] = background_masses_list[:]
     grp_raw_ms = grp_ms.createGroup("Raw MS Data")
     raw_mass = grp_raw_ms.createVariable("mass", "f8", mass)
     raw_ms_intensity = grp_raw_ms.createVariable("Intensity", "f8", intensity)
@@ -395,6 +401,7 @@ def create_new_background_spectra(background_filepath, method_name, settings):
     for i in range(len(background_chr_dad.data["DAD spectra"])):
         chr_intensity[i,:] = background_chr_dad.data["DAD spectra"][i,1]  # wavelength corresponding by index with chr_wavelength
 
+    background_file.close()
     return
 
 def load_background_spectra_signal(method, settings, processed=True):

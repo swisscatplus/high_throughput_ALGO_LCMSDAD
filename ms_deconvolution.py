@@ -12,6 +12,8 @@ from scipy.stats import skewnorm
 from scipy.integrate import quad
 import ms_spectra_comparison
 import pywt
+import os
+from netCDF4 import Dataset
 
 
 
@@ -20,6 +22,8 @@ Functions to pick peaks in MS chromatogram and consequently perform deconvolutio
 """
 
 def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
+
+    background_masses_list = load_background_masses_list(full_analysis.info["LC Method"], settings)
 
     entropy = np.zeros(shape=len(full_analysis.ms_data3d["MS spectra"]))
     ms_intensity = np.zeros(shape=len(full_analysis.ms_data3d["time"]))
@@ -128,8 +132,84 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         plt.plot(filtered_time, new_entropy)
         plt.show()
 
-    ms_peak_list = ms_summation(reduced_heatmap, entropy_peaks)
+    ms_peak_list = ms_summation(reduced_heatmap, entropy_peaks, background_masses_list)
     return ms_peak_list
+
+def determine_background_masses_list(full_analysis, ms_chr, settings):
+    entropy = np.zeros(shape=len(full_analysis.ms_data3d["MS spectra"]))
+    ms_intensity = np.zeros(shape=len(full_analysis.ms_data3d["time"]))
+
+    df_heatmap = pd.DataFrame(index=np.arange(0.1, 1000.0, 0.1), columns=full_analysis.ms_data3d["time"])
+    # prefilling the df with zeros is much slower when replacing them with intensity values -> fillna at the end
+
+    index = 0
+    for i in full_analysis.ms_data3d["time"]:
+        ms_spectrum = ms_chr.extract_single_ms(i)
+        # print(index)
+
+        entropy[index] = ms_spectra_comparison.calculate_entropy(ms_spectrum)
+
+        ms_intensity[index] = sum(ms_spectrum.data["Intensity"])
+
+        for mass, intensity in zip(ms_spectrum.data["m/z"], ms_spectrum.data["Intensity"]):
+            if mass in df_heatmap.index and intensity > 10000:
+                df_heatmap.at[mass, i] = intensity  # Tried set to 1 for clustering, didn't work well...
+        index += 1
+    df_heatmap.fillna(0, inplace=True)
+    filtered_time = full_analysis.ms_data3d["time"]
+
+    # To allow selection of one polarity when creating the spectrum
+
+    if full_analysis.info["plus_minus_acq"]:
+        if settings["ion_detection_mode"] == "positive":
+            filtered_time = full_analysis.ms_data3d["time"][::2]
+            new_entropy = entropy[::2]
+            new_ms_intensity = ms_intensity[::2]
+            # Now copy polarized into full_analysis to later extract spectra
+            ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][::2]), 2), dtype=object)
+            ms_data_polarized[:, 0] = full_analysis.ms_data3d["MS spectra"][:, 0][::2]
+            ms_data_polarized[:, 1] = full_analysis.ms_data3d["MS spectra"][:, 1][::2]
+            ms_data3d_polarized = {
+                "time": full_analysis.ms_data3d["time"][::2],
+                "total intensity": full_analysis.ms_data3d["total intensity"][::2],
+                "MS spectra": np.array(ms_data_polarized),
+            }
+            full_analysis.ms_data3d_polarized = ms_data3d_polarized
+        elif settings["ion_detection_mode"] == "negative":
+            filtered_time = full_analysis.ms_data3d["time"][1::2]
+            new_entropy = entropy[1::2]
+            new_ms_intensity = ms_intensity[1::2]
+            # Now copy polarized into full_analysis to later extract spectra
+            ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][1::2]), 2), dtype=object)
+            ms_data_polarized[:, 0] = full_analysis.ms_data3d["MS spectra"][:, 0][1::2]
+            ms_data_polarized[:, 1] = full_analysis.ms_data3d["MS spectra"][:, 1][1::2]
+            ms_data3d_polarized = {
+                "time": full_analysis.ms_data3d["time"][1::2],
+                "total intensity": full_analysis.ms_data3d["total intensity"][1::2],
+                "MS spectra": np.array(ms_data_polarized),
+            }
+            full_analysis.ms_data3d_polarized = ms_data3d_polarized
+        else:
+            raise TypeError("Ion detection mode must be either positive or negative.")
+    else:
+        new_entropy = entropy
+        new_ms_intensity = ms_intensity
+
+    times_to_remove = [t for t in df_heatmap.columns if t not in filtered_time]
+    reduced_heatmap = df_heatmap.drop(columns=times_to_remove)
+
+    sum_labels = reduced_heatmap.index * 10 // 5
+    data_sum = reduced_heatmap.groupby(sum_labels).sum()
+    new_indices = data_sum.index * 0.5 + 0.25  # addition to correct that m/z gives the avg of the m/z kernel
+    data_sum.set_index(new_indices, inplace=True)
+
+    list_background_masses = []
+    for i in data_sum.index:  # [305:325] for actual peak
+        intensity = np.array(data_sum.loc[i])
+        total_intensity = np.sum(intensity)
+        if total_intensity > 10000000:
+            list_background_masses.append(i)
+    return list_background_masses
 
 def ms_entropy_peaks(filtered_entropy, plot = False):
     """
@@ -183,7 +263,7 @@ def ms_entropy_peaks(filtered_entropy, plot = False):
     return filtered_peaks + filtered_peaks2  # adding local minima and local maxima
 
 
-def ms_summation(data, entropy_peaks, plot = False):
+def ms_summation(data, entropy_peaks, background_masses_list, plot = False):
     """
     Fct to determine peaks by summation beforehand.
     :param data:
@@ -196,7 +276,7 @@ def ms_summation(data, entropy_peaks, plot = False):
     new_indices = data_sum.index *0.5 + 0.25  # addition to correct that m/z gives the avg of the m/z kernel
     data_sum.set_index(new_indices, inplace=True)
 
-    peak_dict = ms_peak_picking(data_sum)
+    peak_dict = ms_peak_picking(data_sum, background_masses_list)
 
     peak_clusters, inverse_peaklist = determine_peak_clusters(peak_dict, max_peak_width)
     ms_peak_list = process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, max_peak_width)
@@ -428,7 +508,7 @@ def model_peak_lorentz(x, amplitude, x0, gamma, alpha):  # Currently not used
     skew_factor = 1+ alpha*(x-x0)
     return lorentzian * skew_factor
 
-def ms_peak_picking(data_sum, plot = False):
+def ms_peak_picking(data_sum, background_masses_list, plot = False):
     """
     :return:
     """
@@ -436,6 +516,8 @@ def ms_peak_picking(data_sum, plot = False):
     peak_dict = {}
     for i in data_sum.index:  # [305:325] for actual peak
         intensity = np.array(data_sum.loc[i])
+        if i in background_masses_list:
+            intensity[:] = 0
         baseline = als_baseline(intensity)
         corrected_intensity = intensity - baseline
         avg_intensity = np.convolve(corrected_intensity, window, "same")
@@ -458,6 +540,37 @@ def ms_peak_picking(data_sum, plot = False):
             plt.title("m/z value: " + str(i))
             plt.show()
     return peak_dict
+
+def load_background_masses_list(method, settings):
+    """
+    Searches for the background file corresponding to a method, returns list of background masses.
+    :param:
+    :return:
+    """
+    background_folder = os.path.join(settings["directory_project"], "Data_examples", "background_spectra")
+    background_list = os.listdir(background_folder)
+    background_masses_list = None
+
+    for background_file_name in background_list:
+        background_file_path = os.path.join(background_folder, background_file_name)
+        if os.path.isfile(background_file_path) and background_file_path.lower().endswith(".cdf"):
+            if background_file_name[:-4] == method:  # -4 to remove .cdf ending!
+                background_masses_list = extract_background_masses_list(background_file_path)
+        else:
+            print("!!! File " + background_file_name + " is not a supported background file type!")
+
+    if background_masses_list.all() == None:
+        print("No backgroundfile exists for the method " + method)
+        return
+    return background_masses_list
+
+def extract_background_masses_list(background_file_path):
+    background_file = Dataset(background_file_path, "r")
+
+    background_masses_list = background_file.groups["MS Data"].variables["Background masses list"][:].compressed(),
+    background_file.close()
+
+    return background_masses_list[0]
 
 class ms_peak:
     """
