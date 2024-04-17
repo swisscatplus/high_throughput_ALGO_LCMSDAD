@@ -8,7 +8,7 @@ from collections import Counter
 Deal with MS and DAD peak picking and alignment of the corresponding signals.
 """
 
-def assign_peaks(full_analysis, settings):
+def assign_peaks(full_analysis, method_name, settings):
     """
     Main function, to controll handling of the others.
     :param full_analysis:
@@ -35,12 +35,12 @@ def assign_peaks(full_analysis, settings):
     # Now create signal files from the matches peak pairs
     signal_nr = 1
     for match in matches:
-        create_signal_from_match(full_analysis, dad_peaks[match[0]], ms_peaks[match[1]], signal_nr, settings)
+        create_signal_from_match(full_analysis, dad_peaks[match[0]], ms_peaks[match[1]], signal_nr, method_name, settings)
         signal_nr += 1
 
     return
 
-def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, settings):
+def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, method_name, settings):
     """
     Function to extract information from the peaks and run through dpr fct which processes the individual spectrum and creates the signal file.
     :param peak_dad:
@@ -60,6 +60,7 @@ def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, settin
     peak_ms.data.info["Signal Nr"] = str(signal_nr)
     peak_ms.data.info["Run Nr"] = str(full_analysis.info["Run Nr"])
     peak_ms.data.info["Time"] = peak_ms.max
+    peak_ms.data.info["LC Method"] = method_name
     peak_dad.data.info["Run Name"] = full_analysis.info["Name"]
     peak_dad.data.info["Pure"] = peak_dad.pure
     peak_dad.data.info["Relative Purity"] = peak_dad.relative_purity

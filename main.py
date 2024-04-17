@@ -88,7 +88,7 @@ To create new background file, enter path here, change the name and uncomment th
 """
 background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
                                    "240405_Acetic_acid_HILIC-04.JSON")
-data_processing.create_new_background_spectra(background_filepath, method_name, settings)
+data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
 
 
@@ -163,7 +163,7 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
 run_name = "240405_Acetic_acid_HILIC-05.JSON"
-runs.analyse_single_run(run_name, method_name, settings)
+runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example01"
-# runs.analyse_multiple_runs(run_folder_name, method_name, settings)
+# runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)

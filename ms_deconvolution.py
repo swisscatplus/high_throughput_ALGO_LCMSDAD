@@ -182,39 +182,6 @@ def ms_entropy_peaks(filtered_entropy, plot = False):
 
     return filtered_peaks + filtered_peaks2  # adding local minima and local maxima
 
-"""def ms_clustering(data):
- 
-    clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True,
-            gen_min_span_tree=False, leaf_size=40,
-            metric='euclidean', min_cluster_size=5, min_samples=None, p=None)
-    clusterer.fit(data)
-    print(len(clusterer.labels_))
-    print(clusterer.labels_.max())
-    index = 0
-    real_data = data.transpose()
-    for i in clusterer.labels_:
-        if i >= 0:
-            print(real_data.columns[index])
-            # print("time" + str(data["index"][index]))
-            print(clusterer.labels_[index])
-        index += 1
-
-    color_palette = sns.color_palette("deep", clusterer.labels_.max()+1)
-    cluster_colors = [color_palette[x] if x >= 0
-                      else (0.5, 0.5, 0.5)
-                      for x in clusterer.labels_]
-    cluster_member_colors = [sns.desaturate(x, p) for x, p in
-                             zip(cluster_colors, clusterer.probabilities_)]
-    y_list = []
-    for i in range(len(data.columns)):
-        y_list.append(data.columns[i])
-    x_list = [data.index]
-    y_array = np.array(y_list)
-    x_array = np.array(x_list)
-    print(x_array)
-    plt.scatter(data.index,y = data.index, s=50, linewidth=0, c=cluster_member_colors, alpha=0.25)
-    plt.show()
-    return"""
 
 def ms_summation(data, entropy_peaks, plot = False):
     """
@@ -235,7 +202,7 @@ def ms_summation(data, entropy_peaks, plot = False):
     ms_peak_list = process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, max_peak_width)
     return ms_peak_list
 
-def determine_peak_clusters(peak_dict, max_peak_width):
+def determine_peak_clusters(peak_dict, max_peak_width, print_=True):
     """
     Fct to take in the list of peaks and return the clustered m/z belonging together. And the times corresponding
     to the groups.
@@ -244,7 +211,6 @@ def determine_peak_clusters(peak_dict, max_peak_width):
     inverse_peaklist = defaultdict(list)
     peak_clusters = defaultdict(set)
     mass_to_cluster = defaultdict(set)
-    # print(peak_dict)
 
     for mass, peaks in peak_dict.items():
         for peak in peaks:
@@ -269,9 +235,11 @@ def determine_peak_clusters(peak_dict, max_peak_width):
     inverse_peaklist = {m: list(set(p)) for m, p in inverse_peaklist.items()}
 
     # Print analytics
-    """print(peak_clusters)
-    print(mass_to_cluster)
-    print(inverse_peaklist)"""
+    if print_:
+        print(peak_dict)
+        print(peak_clusters)
+        print(mass_to_cluster)
+        print(inverse_peaklist)
     return peak_clusters, inverse_peaklist
 
 def find_cluster(peak, clusters, max_peak_width):
@@ -297,7 +265,7 @@ def time_in_ent_peaks(times, entropy_peaks, max_peak_width):
         if abs(peak_avg - entropy_peak) <= max_peak_width:  # More harsh criteria, kept for now
             # print(peak_avg, entropy_peak)
             return True
-    return False
+    return True  # Inversed for now, don't want entropy criteria CHANGE LATER
 
 def peak_average(peak_list):
     peak_sum = sum(peak_list)
@@ -376,7 +344,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
 
     return ms_peak_list
 
-def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False):
+def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False, print_= True):
     """
     Fit the custom fct, defined as a skewed gaussian.
     :return:
@@ -401,10 +369,11 @@ def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False):
     ss_red = np.sum(residual**2)
     ss_tot = np.sum((smoothed_intensity - np.mean(smoothed_intensity))**2)
     r_squared = 1- (ss_red/ss_tot)
-    #print("Name: " + str(name) + " R2: " + str(r_squared))
-    #print(*parameters)
+    if print_:
+        print("Name: " + str(name) + " R2: " + str(r_squared))
+        print(*parameters)
 
-    if plot and r_squared > .95:
+    if plot and r_squared > .90:
         plt.figure()
         plt.scatter(time, smoothed_intensity, label = "Peak data")
         plt.plot(time, model_peak(time, *parameters), label = "Fit")

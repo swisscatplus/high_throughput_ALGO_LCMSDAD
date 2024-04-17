@@ -4,7 +4,7 @@ import initialize as init
 import signal_peak_handling as sp_handling
 import databank_handling as dtb
 
-def analyse_single_run(run_name, method_name, settings):
+def analyse_single_run(run_name, method_name, background_name, settings):
     """
     From run name to database comparison and creation of output files.
     :param run_name: Needs to be entered as a string.
@@ -17,16 +17,18 @@ def analyse_single_run(run_name, method_name, settings):
                              run_name)
     delete_old_sgn_files(settings)
 
-    full_analysis = init.import_run_json(json_path, method=method_name)
-    dadms.assign_peaks(full_analysis, settings)
+    full_analysis = init.import_run_json(json_path, method=background_name)
+    dadms.assign_peaks(full_analysis, method_name, settings)
 
     sp_handling.signal_comparison(settings)
 
     peak_directory = os.path.join(directory_project, "Data_examples", "Peak_files", settings["peak_folder_time"])
     dtb.compare_all_peaks_dtb(peak_directory, settings)
+
+    del_default_method(background_name, settings)
     return
 
-def analyse_multiple_runs(run_folder_name, method_name, settings):
+def analyse_multiple_runs(run_folder_name, method_name, background_name, settings):
     """
     From run folder to dtb comparison and creation of output files.
     :param run_folder_name: Needs to be entered as a string.
@@ -53,14 +55,24 @@ def analyse_multiple_runs(run_folder_name, method_name, settings):
 
     peak_directory = os.path.join(directory_project, "Data_examples", "Peak_files", settings["peak_folder_time"])
     dtb.compare_all_peaks_dtb(peak_directory, settings)
+
+    del_default_method(background_name, settings)
     return
 
 def delete_old_sgn_files(settings):
     directory_project = settings["directory_project"]
-    signals_directory = os.path.join(directory_project, "Signal_files")
+    signals_directory = os.path.join(directory_project, "Data_examples", "Signal_files")
     signal_list = os.listdir(signals_directory)
 
     for signal_name in signal_list:
         signal_path = os.path.join(signals_directory, signal_name)
         os.remove(signal_path)
+    return
+
+def del_default_method(background_name, settings):
+    directory_project = settings["directory_project"]
+    background_directory = os.path.join(directory_project, "Data_examples", "background_spectra")
+    if background_name == "defaultNew":
+        background_path = os.path.join(background_directory, "defaultNew.cdf")
+        os.remove(background_path)
     return
