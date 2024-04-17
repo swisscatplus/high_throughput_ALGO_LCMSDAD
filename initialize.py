@@ -213,13 +213,22 @@ def import_run_json(path, run_nr = str(1), method = None):
         data_deserialized = json.loads(data)
     measurement_document = data_deserialized["liquid chromatography aggregate document"]\
         ["liquid chromatography document"][0]["measurement aggregate document"]["measurement document"]
-    dad_data3d = measurement_document[3]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
-    ms_data3d = measurement_document[4]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
 
-    """for key in measurement_document[1]:
-        print(key)
-    print(measurement_document[1]["measurement identifier"])"""
-    #print(data_deserialized["liquid chromatography aggregate document"]["device system document"])
+    if measurement_document[3]["measurement identifier"] == "DAD1I":
+        dad_data3d = measurement_document[3]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
+        ms_data3d = measurement_document[4]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
+        plus_minus_acquisition = True
+    elif measurement_document[2]["measurement identifier"] == "DAD1I":
+        dad_data3d = measurement_document[2]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
+        ms_data3d = measurement_document[3]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
+        plus_minus_acquisition = False
+    elif measurement_document[4]["measurement identifier"] == "DAD1I":
+        dad_data3d = measurement_document[4]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
+        ms_data3d = measurement_document[5]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
+        plus_minus_acquisition = True
+    else:
+        raise KeyError("The structure of the data file doesn't align with initialize."
+                       "Investigate the location of the 3D data cubes.")
 
     # first parse the 3D ms data
     chromatogram_ms = np.empty((len(ms_data3d), 2)) # Initialize array for data.
@@ -270,6 +279,8 @@ def import_run_json(path, run_nr = str(1), method = None):
         raise ValueError("Please enter a name for the method used.")
     info = import_full_chr_info(run_nr=run_nr, method = method)
     info["Name"] = measurement_document[0]["sample document"]["written name"]
+
+    info["plus_minus_acq"] = plus_minus_acquisition
 
     return full_analysis(full_chromatogram_ms, full_chromatogram_dad, info)
 

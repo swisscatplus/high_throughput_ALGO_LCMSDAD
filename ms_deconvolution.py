@@ -1,4 +1,3 @@
-import hdbscan
 import numpy as np
 from matplotlib import pyplot as plt
 import hdbscan
@@ -13,6 +12,7 @@ from scipy.stats import skewnorm
 from scipy.integrate import quad
 import ms_spectra_comparison
 import pywt
+
 
 
 """
@@ -56,41 +56,44 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
                 df_heatmap.at[mass, i] = intensity  # Tried set to 1 for clustering, didn't work well...
         index += 1
     df_heatmap.fillna(0, inplace=True)
-    filtered_time = full_analysis.ms_data3d["time"][1::2]  # Still necessary?
+    filtered_time = full_analysis.ms_data3d["time"]
 
     # To allow selection of one polarity when creating the spectrum
 
-
-    if settings["ion_detection_mode"] == "positive":
-        filtered_time = full_analysis.ms_data3d["time"][::2]
-        new_entropy = entropy[::2]
-        new_ms_intensity = ms_intensity[::2]
-        # Now copy polarized into full_analysis to later extract spectra
-        ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][::2]), 2), dtype=object)
-        ms_data_polarized[:, 0] = full_analysis.ms_data3d["MS spectra"][:, 0][::2]
-        ms_data_polarized[:, 1] = full_analysis.ms_data3d["MS spectra"][:, 1][::2]
-        ms_data3d_polarized = {
-            "time": full_analysis.ms_data3d["time"][::2],
-            "total intensity": full_analysis.ms_data3d["total intensity"][::2],
-            "MS spectra": np.array(ms_data_polarized),
-        }
-        full_analysis.ms_data3d_polarized = ms_data3d_polarized
-    elif settings["ion_detection_mode"] == "negative":
-        filtered_time = full_analysis.ms_data3d["time"][1::2]
-        new_entropy = entropy[1::2]
-        new_ms_intensity = ms_intensity[1::2]
-        # Now copy polarized into full_analysis to later extract spectra
-        ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][1::2]), 2), dtype=object)
-        ms_data_polarized[:, 0] = full_analysis.ms_data3d["MS spectra"][:, 0][1::2]
-        ms_data_polarized[:, 1] = full_analysis.ms_data3d["MS spectra"][:, 1][1::2]
-        ms_data3d_polarized = {
-            "time": full_analysis.ms_data3d["time"][1::2],
-            "total intensity": full_analysis.ms_data3d["total intensity"][1::2],
-            "MS spectra": np.array(ms_data_polarized),
-        }
-        full_analysis.ms_data3d_polarized = ms_data3d_polarized
+    if full_analysis.info["plus_minus_acq"]:
+        if settings["ion_detection_mode"] == "positive":
+            filtered_time = full_analysis.ms_data3d["time"][::2]
+            new_entropy = entropy[::2]
+            new_ms_intensity = ms_intensity[::2]
+            # Now copy polarized into full_analysis to later extract spectra
+            ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][::2]), 2), dtype=object)
+            ms_data_polarized[:, 0] = full_analysis.ms_data3d["MS spectra"][:, 0][::2]
+            ms_data_polarized[:, 1] = full_analysis.ms_data3d["MS spectra"][:, 1][::2]
+            ms_data3d_polarized = {
+                "time": full_analysis.ms_data3d["time"][::2],
+                "total intensity": full_analysis.ms_data3d["total intensity"][::2],
+                "MS spectra": np.array(ms_data_polarized),
+            }
+            full_analysis.ms_data3d_polarized = ms_data3d_polarized
+        elif settings["ion_detection_mode"] == "negative":
+            filtered_time = full_analysis.ms_data3d["time"][1::2]
+            new_entropy = entropy[1::2]
+            new_ms_intensity = ms_intensity[1::2]
+            # Now copy polarized into full_analysis to later extract spectra
+            ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][1::2]), 2), dtype=object)
+            ms_data_polarized[:, 0] = full_analysis.ms_data3d["MS spectra"][:, 0][1::2]
+            ms_data_polarized[:, 1] = full_analysis.ms_data3d["MS spectra"][:, 1][1::2]
+            ms_data3d_polarized = {
+                "time": full_analysis.ms_data3d["time"][1::2],
+                "total intensity": full_analysis.ms_data3d["total intensity"][1::2],
+                "MS spectra": np.array(ms_data_polarized),
+            }
+            full_analysis.ms_data3d_polarized = ms_data3d_polarized
+        else:
+            raise TypeError("Ion detection mode must be either positive or negative.")
     else:
-        raise TypeError("Ion detection mode must be either positive or negative.")
+        new_entropy = entropy
+        new_ms_intensity = ms_intensity
 
 
     """df_top_masses = df_top_masses[filter_mask] # For 3D clustering approach
@@ -179,17 +182,8 @@ def ms_entropy_peaks(filtered_entropy, plot = False):
 
     return filtered_peaks + filtered_peaks2  # adding local minima and local maxima
 
-def ms_clustering(data):
-    """
-    Fct to try clustering algorithm
-    :return:
-    """
-
-    """scaler = StandardScaler()
-    x_scaled = scaler.fit_transform(data)
-    pca = PCA(n_components=50)
-    x_pca = pca.fit_transform(x_scaled)
-    print(x_pca)"""
+"""def ms_clustering(data):
+ 
     clusterer = hdbscan.HDBSCAN(algorithm='best', alpha=1.0, approx_min_span_tree=True,
             gen_min_span_tree=False, leaf_size=40,
             metric='euclidean', min_cluster_size=5, min_samples=None, p=None)
@@ -220,7 +214,7 @@ def ms_clustering(data):
     print(x_array)
     plt.scatter(data.index,y = data.index, s=50, linewidth=0, c=cluster_member_colors, alpha=0.25)
     plt.show()
-    return
+    return"""
 
 def ms_summation(data, entropy_peaks, plot = False):
     """

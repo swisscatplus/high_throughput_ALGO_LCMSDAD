@@ -48,8 +48,11 @@ def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, settin
     :param settings:
     :return:
     """
+    if full_analysis.info["plus_minus_acq"]:
+        ms_chr = dpr.MS_full_chr(full_analysis.ms_data3d_polarized, full_analysis.info)
+    else:
+        ms_chr = dpr.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
 
-    ms_chr = dpr.MS_full_chr(full_analysis.ms_data3d_polarized, full_analysis.info)
     peak_ms.data = ms_chr.extract_ms_timespan(peak_ms.left, peak_ms.right)  # For now extract full spectrum
     # Later change so that only selected m/z values are put into the spectrum.
 
@@ -89,7 +92,7 @@ def estimate_offset(times_ms, times_dad):
     :return: Offset value
     """
     # Preset offset max and minimum:
-    min_offset = 5
+    min_offset = 2
     max_offset = 20
 
     time_differences = np.abs(times_ms[:, None] - times_dad)
@@ -121,8 +124,8 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
     :param offset:
     :return:
     """
-    # Preset time tolerance of 3 secounds
-    tolerance = 3.
+    # Preset time tolerance of 8 secounds
+    tolerance = 8.
 
     matches = []
 
