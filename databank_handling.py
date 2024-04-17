@@ -136,7 +136,7 @@ def load_dtb_entry(dtb_entry_path, processed = True):
 
     info = {
         "Processed": processed,
-        "Databaase": True,
+        "Database": True,
         "Molecule Name": dtb_file.molecule_name,
         "Molecule InChI": dtb_file.molecule_inchi,
         "Methods": methods,

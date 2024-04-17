@@ -21,6 +21,7 @@ import pywt
 from datetime import datetime
 import combine_ms_dad as dadms
 import runs_handling as runs
+import output as out
 
 
 # Go back directories until we have project folder
@@ -163,7 +164,9 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
 run_name = "240405_Acetic_acid_HILIC-05.JSON"
-runs.analyse_single_run(run_name, method_name, background_method, settings)
+# runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example01"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
+
+out.dtb_molecule_list(settings)

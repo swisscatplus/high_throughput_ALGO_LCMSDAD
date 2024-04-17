@@ -327,6 +327,11 @@ def create_new_background_spectra(background_filepath, method_name, settings):
 
     background_masses_list = msd.determine_background_masses_list(background_full_analysis, background_chr_ms, settings)
 
+    if background_full_analysis.info["plus_minus_acq"]:
+        background_chr_ms = MS_full_chr(background_full_analysis.ms_data3d_polarized \
+                                        , init.import_full_chr_info(background=True))
+        background_chr_ms.chr_info["LC Method"] = method_name
+
     begin_t_msr = 0 #  later define this as the difference in measurment time, until fraction arrives at ms (?)
     end_t_msr = background_chr_ms.data["time"][-1]
     background_ms = background_chr_ms.extract_ms_timespan(begin_t_msr, end_t_msr)  # Change data depending on polarization!
