@@ -139,7 +139,6 @@ def create_peak_file(signal_file_path, peak_folder_path, peak_nr):
     hits_only_dad = peak_file.createGroup("dtb hits only DAD")
     hits_only_dad.dtb_hits = ""
 
-
     signal_file.close()
     peak_file.close()
     return

@@ -60,3 +60,47 @@ def dtb_molecule_spectra(file_path, processed):
 
     dtb_file.close()
     return ms_spectrum, dad_spectrum
+
+def peak_spectra(peak_path, processed):
+    peak_file = Dataset(peak_path, "r")
+
+    if processed:
+        data_ms = pd.DataFrame({
+            "m/z": peak_file.groups["MS Data"].groups["Processed MS Data"].variables["mass"][:].compressed(),
+            "Intensity": peak_file.groups["MS Data"].groups["Processed MS Data"].variables["Intensity"][:].compressed(),
+        })
+        data_dad = pd.DataFrame({
+            "Wavelength": peak_file.groups["DAD Data"].groups["Processed DAD Data"].variables["Wavelength"] \
+                [:].compressed(),
+            "Intensity": peak_file.groups["DAD Data"].groups["Processed DAD Data"].variables["Intensity"] \
+                [:].compressed(),
+            # "FT Wavelength": signal_file.groups["DAD Data"].groups["Processed DAD Data"].variables["FT Wavelength"]\
+            # [:].compressed(),  # uncomment once FT is implemented
+        })
+    else:
+        data_ms = pd.DataFrame({
+            "m/z": peak_file.groups["MS Data"].groups["Raw MS Data"].variables["mass"][:].compressed(),
+            "Intensity": peak_file.groups["MS Data"].groups["Raw MS Data"].variables["Intensity"][:].compressed(),
+        })
+        data_dad = pd.DataFrame({
+            "Wavelength": peak_file.groups["DAD Data"].groups["Raw DAD Data"].variables["Wavelength"] \
+                [:].compressed(),
+            "Intensity": peak_file.groups["DAD Data"].groups["Raw DAD Data"].variables["Intensity"] \
+                [:].compressed(),
+        })
+    ms_spectrum = dpr.MS_Spectra(data_ms, init.import_spectra_info())
+    dad_spectrum = dpr_dad.DAD_Spectra(data_dad, init.import_spectra_info())
+    ms_spectrum.info["Normalized"] = processed
+    dad_spectrum.info["Normalized"] = processed
+
+    peak_file.close()
+    return ms_spectrum, dad_spectrum
+
+def peak_molecule_name(peak_path):
+    peak_file = Dataset(peak_path, "r")
+    molecule_name = peak_file.dtb_hits
+    peak_file.close()
+
+    if molecule_name == "":
+        molecule_name = "Unknown Molecule"
+    return molecule_name

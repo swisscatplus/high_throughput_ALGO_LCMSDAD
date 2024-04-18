@@ -56,16 +56,13 @@ def signal_comparison(settings):
 
     signal_list_updated = os.listdir(signal_files_path)
 
-    """now = datetime.now()
-    fld_name = now.strftime("%Y-%m-%d_%H-%M-%S") # Create peak folder with time stamp for current experiment"""
-
     peak_folder_path = os.path.join(directory_project, "Data_examples", "Peak_files", settings["peak_folder_time"])
     os.makedirs(peak_folder_path, exist_ok=True)
 
     peak_nr = 1
     for signal in signal_list_updated:  # Creates a peak file for every signal file that still exists
         signal_file_path = os.path.join(signal_files_path, signal)
-        create_file.create_peak_file(signal_file_path, peak_folder_path, peak_nr) # Not yet tested!
+        create_file.create_peak_file(signal_file_path, peak_folder_path, peak_nr)  # Not yet tested!
         # The number of all runs of that signal should be saved within the peak file
         peak_nr += 1
 

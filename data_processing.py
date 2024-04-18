@@ -13,7 +13,7 @@ import ms_deconvolution as msd
 
 def process_deconvoluted_peak(ms_spectrum, dad_spectrum, method, settings):
     """
-    Take aligned spectrums and create signal file based upon this.
+    Take aligned spectra and create signal file based upon this.
     :param ms_spectrum:
     :param dad_spectrum:
     :param settings:

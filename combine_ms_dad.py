@@ -65,9 +65,6 @@ def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, method
     peak_dad.data.info["Pure"] = peak_dad.pure
     peak_dad.data.info["Relative Purity"] = peak_dad.relative_purity
     peak_dad.data.info["Integral"] = peak_dad.integral
-    print(full_analysis.info)
-    print(peak_ms.data.info)
-    print(peak_dad.data.info)
 
     # Make sure that the .info part contains the correct information. It goes into the signal file from there.
     dpr.process_deconvoluted_peak(peak_ms.data, peak_dad.data, full_analysis.info["LC Method"], settings)
@@ -94,7 +91,7 @@ def estimate_offset(times_ms, times_dad):
     """
     # Preset offset max and minimum:
     min_offset = 2
-    max_offset = 60
+    max_offset = 20
 
     time_differences = np.abs(times_ms[:, None] - times_dad)
     flat_differences = time_differences.flatten()
@@ -159,8 +156,6 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
             matches.append((close_indices_dad[largest_integral_index], close_indices_ms[0]))
             # print("1 MS and more DAD")
         elif len(close_indices_ms) > 1 and len(close_indices_dad) > 1:  # Several DAD and MS peaks close by
-            relevant_integrals_ms = []
-            relevant_integrals_dad = []
 
             # First, iterate over present dad and ms indices and add new indices until no more are being added
             # This is to completely capture "chained" peaks

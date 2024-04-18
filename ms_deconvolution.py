@@ -47,8 +47,7 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
 
         ms_intensity[index] = sum(ms_spectrum.data["Intensity"])
         sorted_index = np.argsort(-ms_spectrum.data["Intensity"])[:5]
-        """for index_value in range(len(sorted_index)):  # For 3D clustering approach
-            df_top_masses.iloc[index, index_value] = ms_spectrum.data["m/z"][sorted_index[index_value]]"""
+
         if plot:
             for value in np.arange(155.8, 160.5, 0.1):
                 for mass in ms_spectrum.data["m/z"]:
@@ -99,14 +98,8 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         new_entropy = entropy
         new_ms_intensity = ms_intensity
 
-
-    """df_top_masses = df_top_masses[filter_mask] # For 3D clustering approach
-    df_masses_with_rt = df_top_masses.reset_index()"""
-
     times_to_remove = [t for t in df_heatmap.columns if t not in filtered_time]
     reduced_heatmap = df_heatmap.drop(columns = times_to_remove)
-    """with pd.option_context("display.max_rows",None):
-        print(df_top_masses)"""
 
     entropy_peaks = ms_entropy_peaks(new_entropy)
 
@@ -136,7 +129,6 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
     return ms_peak_list
 
 def determine_background_masses_list(full_analysis, ms_chr, settings):
-    entropy = np.zeros(shape=len(full_analysis.ms_data3d["MS spectra"]))
     ms_intensity = np.zeros(shape=len(full_analysis.ms_data3d["time"]))
 
     df_heatmap = pd.DataFrame(index=np.arange(0.1, 1000.0, 0.1), columns=full_analysis.ms_data3d["time"])
@@ -146,8 +138,6 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
     for i in full_analysis.ms_data3d["time"]:
         ms_spectrum = ms_chr.extract_single_ms(i)
         # print(index)
-
-        entropy[index] = ms_spectra_comparison.calculate_entropy(ms_spectrum)
 
         ms_intensity[index] = sum(ms_spectrum.data["Intensity"])
 
@@ -163,7 +153,6 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
     if full_analysis.info["plus_minus_acq"]:
         if settings["ion_detection_mode"] == "positive":
             filtered_time = full_analysis.ms_data3d["time"][::2]
-            new_entropy = entropy[::2]
             new_ms_intensity = ms_intensity[::2]
             # Now copy polarized into full_analysis to later extract spectra
             ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][::2]), 2), dtype=object)
@@ -177,7 +166,6 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
             full_analysis.ms_data3d_polarized = ms_data3d_polarized
         elif settings["ion_detection_mode"] == "negative":
             filtered_time = full_analysis.ms_data3d["time"][1::2]
-            new_entropy = entropy[1::2]
             new_ms_intensity = ms_intensity[1::2]
             # Now copy polarized into full_analysis to later extract spectra
             ms_data_polarized = np.empty((len(full_analysis.ms_data3d["MS spectra"][:, 0][1::2]), 2), dtype=object)
@@ -192,7 +180,6 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
         else:
             raise TypeError("Ion detection mode must be either positive or negative.")
     else:
-        new_entropy = entropy
         new_ms_intensity = ms_intensity
 
     times_to_remove = [t for t in df_heatmap.columns if t not in filtered_time]
@@ -471,7 +458,7 @@ def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False, pri
         target_value = relative_intensity * 1  # 1 is amplitude since we normed the peak to this
         return model_peak(x, *parameters) - target_value
 
-    if r_squared > .95:
+    if r_squared > .90:
         solution_left = root_scalar(solving_model_borders, bracket=[parameters[1] - 10*parameters[2], parameters[1]], method="brentq")
         solution_right = root_scalar(solving_model_borders, bracket=[parameters[1], parameters[1] + 10*parameters[2]], method="brentq")
         peak_borders = (solution_left.root, solution_right.root)

@@ -47,7 +47,7 @@ def databank_comparison_all(analyte_path, settings):
             dtb_spectrum_dad = dtb_spectrum.dad_spectrum
             dtb_methods = dtb_spectrum.info["Methods"]
 
-            equal_ms_spectra =  ms_comp.comparison_ms(analyte_spectrum_ms, dtb_spectrum_ms, settings)
+            equal_ms_spectra = ms_comp.comparison_ms(analyte_spectrum_ms, dtb_spectrum_ms, settings)
             equal_dad_spectra = dad_comp.comparison_dad(analyte_spectrum_dad, dtb_spectrum_dad, settings)
 
             if analyte_method in dtb_methods.columns:
@@ -93,7 +93,7 @@ def databank_comparison_all(analyte_path, settings):
                 analyte_file.groups["dtb hits only DAD"].dtb_hits = new_hits
 
             analyte_file.close()
-        else: # Prints error in case there is a wrong file
+        else:  # Prints error in case there is a wrong file
             print("!!! File " + single_entry + " is not a supported database file type!")
     return
 
@@ -129,7 +129,7 @@ def load_dtb_entry(dtb_entry_path, processed = True):
                 [:].compressed(),
         })
 
-    methods = pd.DataFrame({}) # pd Dataframe to store all methods and retention times.
+    methods = pd.DataFrame({})  # pd Dataframe to store all methods and retention times.
 
     for name, method_name in dtb_file.groups["Methods"].groups.items():
         methods[name] = method_name.variables["Retention Time"][:]

@@ -171,3 +171,4 @@ run_folder_name = "example01"
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
+out.create_analysis_report(settings, peak_folder="2024-04-17_18-41-13", report_name="testreport")
