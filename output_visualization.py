@@ -118,3 +118,67 @@ def draw_molecule(inchi):
     html_image = f'<img src="data:image/png;base64,{b64_string}" alt="Molecule Image" style="width: 30%; height: auto;">'
 
     return html_image
+
+def altair_plot_chrom_ms(chrom_ms):
+    brush = alt.selection_interval(encodings=["x", "y"])
+
+    base_chart = alt.Chart(chrom_ms).mark_line().encode(
+        x=alt.X("time", title="Time [s]"),
+        y=alt.Y("total intensity", title="Intensity [Count]")
+    ).properties(
+        title=alt.TitleParams(
+            text='MS Chromatogram',
+            fontSize=20,
+            color='black',
+            align='center'
+        )
+    )
+
+    left = base_chart.add_params(brush).properties(
+        width=700
+    )
+
+    right = base_chart.transform_filter(
+        brush
+    ).properties(
+        width=350,
+        title=alt.TitleParams(
+            text='Zoom',
+            fontSize=20,
+            color='black',
+            align='center'
+        )
+    )
+    return alt.hconcat(left, right)
+
+def altair_plot_chrom_dad(chrom_dad):
+    brush = alt.selection_interval(encodings=["x", "y"])
+
+    base_chart = alt.Chart(chrom_dad).mark_line().encode(
+        x=alt.X("time", title="Time [s]"),
+        y=alt.Y("total intensity", title="Intensity [mAU]")
+    ).properties(
+        title=alt.TitleParams(
+            text='DAD Chromatogram',
+            fontSize=20,
+            color='black',
+            align='center'
+        )
+    )
+
+    left = base_chart.add_params(brush).properties(
+        width=700
+    )
+
+    right = base_chart.transform_filter(
+        brush
+    ).properties(
+        width=350,
+        title=alt.TitleParams(
+            text='Zoom',
+            fontSize=20,
+            color='black',
+            align='center'
+        )
+    )
+    return alt.hconcat(left, right)

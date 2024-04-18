@@ -62,10 +62,11 @@ settings = {
     "retention_time_interval": .5,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "positive"  # positive or negative
+    "ion_detection_mode": "negative",  # positive or negative
+    "method_name": "AceticAcid01"
 }
 print("Weighting function used for MS Spectra: " + settings["ms_weighting_fct"])
-method_name = "AceticAcid01"
+method_name = "AceticAcid01"  # Change into settings later!
 background_method = "defaultNew"
 
 
@@ -166,9 +167,9 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 run_name = "240405_Acetic_acid_HILIC-101.JSON"
 # runs.analyse_single_run(run_name, method_name, background_method, settings)
 
-run_folder_name = "example01"
+run_folder_name = "example_run"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-out.create_analysis_report(settings, peak_folder="2024-04-17_18-41-13", report_name="testreport")
+out.create_analysis_report(settings, run_folder_name, peak_folder="2024-04-17_18-41-13", report_name="testreport")

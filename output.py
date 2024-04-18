@@ -42,7 +42,7 @@ def dtb_molecule_full_data(file_name, settings, processed = True):
     out_vis.plot_dad_spectrum(dad_spectrum)
     return
 
-def create_analysis_report(settings, peak_folder = None, report_name = None):
+def create_analysis_report(settings, run_folder, peak_folder = None, report_name = None):
     """
     Create output HTML file including visual output.
     :param settings:
@@ -65,6 +65,17 @@ def create_analysis_report(settings, peak_folder = None, report_name = None):
     reports_directory = os.path.join(settings["directory_project"], "Data_examples", "Reports")
     report_path = os.path.join(reports_directory, report_name) + ".html"
 
+    runs_directory = os.path.join(settings["directory_project"], "Data_examples", "testfiles", run_folder)
+    run_list = os.listdir(runs_directory)
+
+    if len(run_list) == 0:
+        print("No runs to analyse.")
+        return
+
+    """
+    Handling of peaks
+    """
+
     peak_report_list = []
     for peak_name in peak_list:
         peak = create_peak_report(peak_name, peaks_directory)
@@ -80,9 +91,57 @@ def create_analysis_report(settings, peak_folder = None, report_name = None):
         blocks=peaks_groups,
         type=dp.SelectType.DROPDOWN
     )
-    master_report = dp.Report(
+
+    """
+    Handling of runs
+    """
+
+    run_report_list = []
+    run_nr = 1
+    for run_name in run_list:
+        run = create_run_report(run_name, runs_directory, run_nr, settings)
+        run_report_list.append(run)
+        run_nr += 1
+
+    runs_groups = [dp.Group(*run[0], label=("Run Nr.: " + str(run[1]))) for run in run_report_list]
+    while len(runs_groups) <= 1:
+        runs_groups.append(dp.Group(
+            dp.Text("#")
+        ))
+
+    run_rep_select = dp.Select(
+        blocks=runs_groups,
+        type=dp.SelectType.DROPDOWN
+    )
+    """
+    Handling groups to build in.
+    """
+
+    all_peaks_group = dp.Group(
         peak_rep_select,
-        dp.Text("#")
+        dp.Text("#"),
+        label="Peaks"
+    )
+    all_runs_group = dp.Group(
+        run_rep_select,
+        dp.Text("#"),
+        label="Runs"
+    )
+    all_analysis_group = dp.Group(
+        dp.Text("Further Analysis"),
+        label="Analysis"
+    )
+
+    select_report = dp.Select(
+        blocks=[
+        all_peaks_group,
+        all_runs_group,
+        all_analysis_group
+        ]
+    )
+
+    master_report = dp.Report(
+        select_report
     )
 
     master_report.save(path=report_path, open=True)
@@ -146,3 +205,26 @@ def create_peak_report(peak_name, peaks_directory):
     ]
 
     return report, peak_name
+
+def create_run_report(run_name, run_directory, run_nr, settings):
+    run_path = os.path.join(run_directory, run_name)
+    chrom_ms, chrom_dad = out_files.run_chromatograms(run_path, settings)
+    ms_chart = out_vis.altair_plot_chrom_ms(chrom_ms)
+    dad_chart = out_vis.altair_plot_chrom_dad(chrom_dad)
+    chrom_combined = alt.vconcat(ms_chart, dad_chart).resolve_scale(color="independent")
+
+    chrom_group = dp.Group(
+        dp.Plot(chrom_combined, label="Chromatograms")
+    )
+    run_display = dp.Group(
+        dp.Text("File: " + run_name),
+        dp.Text("Method: " + settings["method_name"]),
+        dp.Text("Ion detection mode: " + settings["ion_detection_mode"])
+    )
+
+    report = [
+        run_display,
+        chrom_group
+    ]
+
+    return report, run_nr

@@ -131,3 +131,30 @@ def peak_retention_time(peak_path):
     retention_time = peak_file.time
     peak_file.close()
     return retention_time
+
+def run_chromatograms(run_path, settings):
+    full_analysis = init.import_run_json(run_path, method=settings["method_name"])
+
+    if full_analysis.info["plus_minus_acq"]:
+        if settings["ion_detection_mode"] == "positive":
+            ms_chrom = pd.DataFrame({
+                "time": full_analysis.ms_data3d["time"][::2],
+                "total intensity": full_analysis.ms_data3d["total intensity"][::2]
+            })
+        elif settings["ion_detection_mode"] == "negative":
+            ms_chrom = pd.DataFrame({
+                "time": full_analysis.ms_data3d["time"][1::2],
+                "total intensity": full_analysis.ms_data3d["total intensity"][1::2]
+            })
+        else:
+            raise NameError("Please enter a valid ion detection mode.")
+    else:
+        ms_chrom = pd.DataFrame({
+            "time": full_analysis.ms_data3d["time"],
+            "total intensity": full_analysis.ms_data3d["total intensity"]
+        })
+    dad_chrom = pd.DataFrame({
+        "time": full_analysis.dad_data3d["time"],
+        "total intensity": full_analysis.dad_data3d["total intensity"]
+    })
+    return ms_chrom, dad_chrom
