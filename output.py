@@ -1,5 +1,6 @@
 import os
 import output_files as out_files
+import output_visualization as out_vis
 
 def dtb_molecule_list(settings):
     directory_project = settings["directory_project"]
@@ -23,10 +24,17 @@ def dtb_molecule_list(settings):
             print("The file " + entry + " is not a valid database entry.")
     return
 
-def plot_dtb_molecule_spectra(file_name, settings, processed = False):
+def dtb_molecule_full_data(file_name, settings, processed = True):
     directory_project = settings["directory_project"]
     file_path = os.path.join(directory_project, "Data_examples", "database", file_name)
 
-    ms_spectrum, dad_spectrum = out_files.dtb_molecule_spectra(file_path)
+    ms_spectrum, dad_spectrum = out_files.dtb_molecule_spectra(file_path, processed)
+    methods_list = out_files.dtb_molecule_methods(file_path)
 
+    print("-----------")
+    print("File Name: " + file_name)
+    print("Available methods: " + str(methods_list))
+    print("Processed spectra: " + str(processed))
+    out_vis.plot_ms_spectrum(ms_spectrum)
+    out_vis.plot_dad_spectrum(dad_spectrum)
     return

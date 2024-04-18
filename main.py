@@ -169,4 +169,5 @@ run_name = "240405_Acetic_acid_HILIC-05.JSON"
 run_folder_name = "example01"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
-out.dtb_molecule_list(settings)
+# out.dtb_molecule_list(settings)
+# out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
