@@ -98,9 +98,36 @@ def peak_spectra(peak_path, processed):
 
 def peak_molecule_name(peak_path):
     peak_file = Dataset(peak_path, "r")
-    molecule_name = peak_file.dtb_hits
+
+    if not peak_file.dtb_hits == "":
+        molecule_name = peak_file.dtb_hits
+    elif not peak_file.groups["dtb hits different method"].dtb_hits == "":
+        molecule_name = "Unknown Molecule " \
+                        + "Hits different method: " + peak_file.groups["dtb hits different method"].dtb_hits
+    elif not (peak_file.groups["dtb hits only MS"].dtb_hits == "" and
+              peak_file.groups["dtb hits only DAD"].dtb_hits == ""):
+        molecule_name = "Unknown Molecule " \
+                        + "Hits only MS: " + peak_file.groups["dtb hits only MS"].dtb_hits \
+                        + " Hits only DAD: " + peak_file.groups["dtb hits only DAD"].dtb_hits
+    else:
+        molecule_name = "Unknown Molecule"
+
     peak_file.close()
 
-    if molecule_name == "":
-        molecule_name = "Unknown Molecule"
     return molecule_name
+
+def peak_inchi(peak_path):
+    peak_file = Dataset(peak_path, "r")
+    if peak_file.several_hits == "Yes" or peak_file.dtb_hits_inchi == "":
+        return None
+    else:
+        inchi = peak_file.dtb_hits_inchi
+
+    peak_file.close()
+    return inchi
+
+def peak_retention_time(peak_path):
+    peak_file = Dataset(peak_path, "r")
+    retention_time = peak_file.time
+    peak_file.close()
+    return retention_time

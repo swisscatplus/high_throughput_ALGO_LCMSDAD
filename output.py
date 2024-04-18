@@ -57,22 +57,56 @@ def create_analysis_report(settings, peak_folder = None, report_name = None):
 
     peaks_directory = os.path.join(settings["directory_project"], "Data_examples", "Peak_files", peak_folder)
     peak_list = os.listdir(peaks_directory)
+
+    if len(peak_list) == 0:
+        print("No peaks to analyse.")
+        return  # Later change so we go to run analysis directly
+
     reports_directory = os.path.join(settings["directory_project"], "Data_examples", "Reports")
     report_path = os.path.join(reports_directory, report_name) + ".html"
 
+    peak_report_list = []
     for peak_name in peak_list:
-        peak_path = os.path.join(peaks_directory, peak_name)
-        ms_spectrum, dad_spectrum = out_files.peak_spectra(peak_path, False)
-        ms_spec_proc, dad_spec_proc = out_files.peak_spectra(peak_path, True)
+        peak = create_peak_report(peak_name, peaks_directory)
+        peak_report_list.append(peak)
 
-        ms_chart = out_vis.altair_plot_ms(ms_spectrum, False)
-        dad_chart = out_vis.altair_plot_dad(dad_spectrum, False)
-        ms_chart_proc = out_vis.altair_plot_ms(ms_spec_proc, True)
-        dad_chart_proc = out_vis.altair_plot_dad(dad_spec_proc, True)
-        # spectra_unproc = alt.vconcat(ms_chart, dad_chart).resolve_scale(color="independent")
-        # spectra_proc = alt.vconcat(ms_chart_proc, dad_chart_proc).resolve_scale(color="independent")
+    peaks_groups = [dp.Group(*peak[0], label=peak[1]) for peak in peak_report_list]
+    while len(peaks_groups) <= 1:
+        peaks_groups.append(dp.Group(
+            dp.Text("#")
+        ))
 
-        molecule_name = out_files.peak_molecule_name(peak_path)
+    peak_rep_select = dp.Select(
+        blocks=peaks_groups,
+        type=dp.SelectType.DROPDOWN
+    )
+    master_report = dp.Report(
+        peak_rep_select,
+        dp.Text("#")
+    )
+
+    master_report.save(path=report_path, open=True)
+    return
+
+def create_peak_report(peak_name, peaks_directory):
+    peak_path = os.path.join(peaks_directory, peak_name)
+    ms_spectrum, dad_spectrum = out_files.peak_spectra(peak_path, False)
+    ms_spec_proc, dad_spec_proc = out_files.peak_spectra(peak_path, True)
+
+    ms_chart = out_vis.altair_plot_ms(ms_spectrum, False)
+    dad_chart = out_vis.altair_plot_dad(dad_spectrum, False)
+    ms_chart_proc = out_vis.altair_plot_ms(ms_spec_proc, True)
+    dad_chart_proc = out_vis.altair_plot_dad(dad_spec_proc, True)
+    # spectra_unproc = alt.vconcat(ms_chart, dad_chart).resolve_scale(color="independent")
+    # spectra_proc = alt.vconcat(ms_chart_proc, dad_chart_proc).resolve_scale(color="independent")
+    retention_time = round(out_files.peak_retention_time(peak_path), 3)
+
+    molecule_name = out_files.peak_molecule_name(peak_path)
+    inchi = out_files.peak_inchi(peak_path)
+    if not inchi == None:
+        molecule_image_html = out_vis.draw_molecule(inchi)
+    else:
+        molecule_image_html = None
 
     select_spectra = dp.Select(blocks=[
         dp.Plot(ms_chart, label="Unprocessed MS Spectrum"),
@@ -88,14 +122,27 @@ def create_analysis_report(settings, peak_folder = None, report_name = None):
         dp.DataTable(dad_spec_proc.data, label="Processed DAD Spectrum")
     ])
 
-
-    report = dp.Report(
-
+    if not molecule_image_html == None:
+        molecule_display = dp.Group(
+            dp.Group(
+                dp.Text("File: " + peak_name),
+                dp.Text("Molecule: " + molecule_name),
+                dp.Text("Retention time: " + str(retention_time) + " s"),
+            ),
+            dp.HTML(molecule_image_html),
+            columns=2
+        )
+    else:
+        molecule_display = dp.Group(
             dp.Text("File: " + peak_name),
             dp.Text("Molecule: " + molecule_name),
-            select_spectra,
-            select_table,
+            dp.Text("Retention time: " + str(retention_time) + " s"),
+        )
 
-    )
-    report.save(path=report_path, open=True)
-    return
+    report = [
+        molecule_display,
+        select_spectra,
+        select_table,
+    ]
+
+    return report, peak_name

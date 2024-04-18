@@ -428,7 +428,7 @@ def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False, pri
     std_guess = 10
     skewness_guess = .1
     initial_conditions = [amplitude_guess, mean_guess, std_guess, skewness_guess]
-    bounds = ([0, 0, 0, 0], [np.inf, time[-1], 100, 5])
+    bounds = ([0, 0, 0, 0], [np.inf, time[-1], 100, 15])
 
     # Skewed gaussian fit
     parameters, covariance =  curve_fit(model_peak, time, smoothed_intensity, p0=initial_conditions, bounds=bounds)
@@ -440,7 +440,7 @@ def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False, pri
         print("Name: " + str(name) + " R2: " + str(r_squared))
         print(*parameters)
 
-    if plot and r_squared > .90:
+    if plot:
         plt.figure()
         plt.scatter(time, smoothed_intensity, label = "Peak data")
         plt.plot(time, model_peak(time, *parameters), label = "Fit")

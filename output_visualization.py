@@ -1,5 +1,10 @@
 from matplotlib import pyplot as plt
 import altair as alt
+from rdkit import Chem
+from rdkit.Chem import Draw
+from PIL import Image
+import io
+import base64
 
 
 def plot_ms_spectrum(ms_spectrum):
@@ -101,3 +106,15 @@ def altair_plot_dad(dad_spectrum, processed):
         )
     )
     return alt.hconcat(left, right)
+
+def draw_molecule(inchi):
+    molecule = Chem.MolFromInchi(inchi)
+    image = Draw.MolToImage(molecule)
+
+    img_byte_arr = io.BytesIO()
+    image.save(img_byte_arr, format='PNG')
+    img_byte_arr = img_byte_arr.getvalue()
+    b64_string = base64.b64encode(img_byte_arr).decode()
+    html_image = f'<img src="data:image/png;base64,{b64_string}" alt="Molecule Image" style="width: 30%; height: auto;">'
+
+    return html_image

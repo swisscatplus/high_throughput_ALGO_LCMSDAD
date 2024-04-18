@@ -62,7 +62,7 @@ settings = {
     "retention_time_interval": .5,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "positive"
+    "ion_detection_mode": "positive"  # positive or negative
 }
 print("Weighting function used for MS Spectra: " + settings["ms_weighting_fct"])
 method_name = "AceticAcid01"
@@ -88,7 +88,7 @@ To create new background file, enter path here, change the name and uncomment th
 ---------------------------------------------------------
 """
 background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   "240405_Acetic_acid_HILIC-04.JSON")
+                                   "240405_Acetic_acid_HILIC-100.JSON")
 data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
 
@@ -163,7 +163,7 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dadms.assign_peaks(full_analysis, settings)
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
-run_name = "240405_Acetic_acid_HILIC-05.JSON"
+run_name = "240405_Acetic_acid_HILIC-101.JSON"
 # runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example01"
