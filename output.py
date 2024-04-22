@@ -72,6 +72,8 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
         print("No runs to analyse.")
         return
 
+    peaks_with_runs = out_files.associate_peaks_runs(run_folder, peak_folder, settings)
+
     """
     Handling of peaks
     """

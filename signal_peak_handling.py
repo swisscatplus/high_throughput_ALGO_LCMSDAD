@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 import pandas as pd
 from netCDF4 import Dataset
+import numpy as np
 
 import create_file
 import data_processing
@@ -41,15 +42,28 @@ def signal_comparison(settings):
                                                                 sec_signal.info["Retention Time"], settings)
                 if comparison_ms and comparison_dad and comparison_rf:
                     chosen_signal = choose_better_signal(first_signal, sec_signal)
-                    combined_run_nr = first_signal.info["Run Nr"] + ", " + sec_signal.info["Run Nr"]
+                    combined_run_nr = np.hstack((first_signal.all_runs["All runs"], sec_signal.all_runs["All runs"]))
+                    combined_ret_times = np.hstack((first_signal.all_runs["Retention times"], sec_signal.all_runs["Retention times"]))
+                    combined_rel_pur = np.hstack((first_signal.all_runs["Relative Purities"], sec_signal.all_runs["Relative Purities"]))
+                    combined_integrals = np.hstack((first_signal.all_runs["Integrals"], sec_signal.all_runs["Integrals"]))
+                    combined_pure = np.hstack((first_signal.all_runs["Pure"], sec_signal.all_runs["Pure"]))
+
                     if chosen_signal == 1:
                         signal_file = Dataset(first_signal_path, "r+")
-                        signal_file.run_nr = combined_run_nr
+                        signal_file.variables["All runs"][:] = combined_run_nr
+                        signal_file.variables["All times"][:] = combined_ret_times
+                        signal_file.variables["All relative purity"][:] = combined_rel_pur
+                        signal_file.variables["All integrals"][:] = combined_integrals
+                        signal_file.variables["All pure"][:] = combined_pure
                         signal_file.close()
                         os.remove(second_signal_path)
                     elif chosen_signal == 2:
                         signal_file = Dataset(second_signal_path, "r+")
-                        signal_file.run_nr = combined_run_nr
+                        signal_file.variables["All runs"][:] = combined_run_nr
+                        signal_file.variables["All times"][:] = combined_ret_times
+                        signal_file.variables["All relative purity"][:] = combined_rel_pur
+                        signal_file.variables["All integrals"][:] = combined_integrals
+                        signal_file.variables["All pure"][:] = combined_pure
                         signal_file.close()
                         os.remove(first_signal_path)
                     signal_list = os.listdir(signal_files_path)
@@ -145,7 +159,15 @@ def load_signal_file(path, processed = True):
         "Retention Time": signal_file.time,
         "Run Nr": signal_file.run_nr,
         "Relative Purity": signal_file.relative_purity,
-        "Integral": signal_file.integral
+        "Integral": signal_file.integral,
+    }
+
+    all_runs = {
+        "All runs": signal_file.variables["All runs"][:].compressed(),
+        "Retention times": signal_file.variables["All times"][:].compressed(),
+        "Relative Purities": signal_file.variables["All relative purity"][:].compressed(),
+        "Integrals": signal_file.variables["All integrals"][:].compressed(),
+        "Pure": signal_file.variables["All pure"][:].compressed(),
     }
 
     if signal_file.pure == "True":
@@ -153,11 +175,13 @@ def load_signal_file(path, processed = True):
     else:
         info["Pure"] = False
 
+    print(all_runs["All runs"])
+
     ms_spectrum = data_processing.MS_Spectra(data_ms, init.import_spectra_info())
     dad_spectrum = dpr_dad.DAD_Spectra(data_dad, init.import_spectra_info())
     ms_spectrum.info["Normalized"] = processed
     dad_spectrum.info["Normalized"] = processed
-    signal = Signal(ms_spectrum, dad_spectrum, info)
+    signal = Signal(ms_spectrum, dad_spectrum, info, all_runs)
 
     signal_file.close()
     return signal
@@ -170,9 +194,10 @@ class Signal:
       Used when dealing with either peaks or signals.
       """
 
-    def __init__(self, ms_spectrum, dad_spectrum, info):
+    def __init__(self, ms_spectrum, dad_spectrum, info, all_runs = None):
         self.ms_spectrum = ms_spectrum
         self.dad_spectrum = dad_spectrum
         self.info = info
+        self.all_runs = all_runs
 
         # Not necessary to correct for decimals since this is in the initalization of ms_spectra..

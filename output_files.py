@@ -158,3 +158,11 @@ def run_chromatograms(run_path, settings):
         "total intensity": full_analysis.dad_data3d["total intensity"]
     })
     return ms_chrom, dad_chrom
+
+def associate_peaks_runs(run_folder, peak_folder, settings):
+    peaks_directory = os.path.join(settings["directory_project"], "Data_examples", "Peak_files", peak_folder)
+    runs_directory = os.path.join(settings["directory_project"], "Data_examples", "testfiles", run_folder)
+
+
+
+    return peaks_with_runs# , runs_with_peaks

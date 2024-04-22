@@ -45,8 +45,8 @@ def analyse_multiple_runs(run_folder_name, method_name, background_name, setting
     for analysis_run_name in analysis_run_list:
         run_path = os.path.join(run_folder_directory, analysis_run_name)
         if os.path.isfile(run_path) and run_path.lower().endswith(".json"):
-            full_analysis = init.import_run_json(run_path, run_nr = str(run_nr), method=method_name)
-            dadms.assign_peaks(full_analysis, settings)
+            full_analysis = init.import_run_json(run_path, run_nr = str(run_nr), method=background_name)
+            dadms.assign_peaks(full_analysis, method_name, settings)
             run_nr += 1
         else:
             print("Warning: File " + analysis_run_name + " is not a supported analysis file type!")

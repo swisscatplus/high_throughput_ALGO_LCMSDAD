@@ -79,6 +79,8 @@ def create_dtb_entry(directory_project, peak_file_path, molecule_name, molecule_
     dtb_file.delncattr("time")
     dtb_file.delncattr("peak_nr")
 
+    # delete other all run variables!
+
     dtb_file.molecule_name = molecule_name
     dtb_file.molecule_inchi = molecule_inchi
     dtb_file.molecule_inchi_key = inchi_key
@@ -163,6 +165,24 @@ def create_signal_file(ms_spec, dad_spec, directory_project, plot = True):
     sglfile.pure = str(dad_spec.info["Pure"])
     sglfile.relative_purity = dad_spec.info["Relative Purity"]
     sglfile.integral = dad_spec.info["Integral"]
+
+    # Save properties of multiple sgl for later conversion to peakfile:
+    run_dimensions = sglfile.createDimension("Run dimension", None)
+    all_runs = sglfile.createVariable("All runs", "f8", run_dimensions)
+    all_times = sglfile.createVariable("All times", "f8", run_dimensions)
+    all_rel_pure = sglfile.createVariable("All relative purity", "f8", run_dimensions)
+    all_integrals = sglfile.createVariable("All integrals", "f8", run_dimensions)
+    all_pure = sglfile.createVariable("All pure", "f8", run_dimensions)
+
+    all_runs[:] = [ms_spec.info["Run Nr"]]
+    all_times[:] = [ms_spec.info["Time"]]
+    all_rel_pure[:] = [dad_spec.info["Relative Purity"]]
+    all_integrals[:] = [dad_spec.info["Integral"]]
+    if dad_spec.info["Pure"]:
+        all_pure[:] = [1]  # 1 for pure, 0 for impure as can't save boolean in .cdf
+    else:
+        all_pure[:] = [0]
+
 
     sglfile.corresponding_peakfile = ""
 
