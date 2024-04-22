@@ -72,7 +72,7 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
         print("No runs to analyse.")
         return
 
-    peaks_with_runs = out_files.associate_peaks_runs(run_folder, peak_folder, settings)
+    # peaks_with_runs = out_files.associate_peaks_runs(run_folder, peak_folder, settings)
 
     """
     Handling of peaks
@@ -101,7 +101,7 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
     run_report_list = []
     run_nr = 1
     for run_name in run_list:
-        run = create_run_report(run_name, runs_directory, run_nr, settings)
+        run = create_run_report(run_name, runs_directory, run_nr, peak_folder, settings)
         run_report_list.append(run)
         run_nr += 1
 
@@ -162,6 +162,13 @@ def create_peak_report(peak_name, peaks_directory):
     # spectra_proc = alt.vconcat(ms_chart_proc, dad_chart_proc).resolve_scale(color="independent")
     retention_time = round(out_files.peak_retention_time(peak_path), 3)
 
+    all_runs = out_files.all_runs_details(peak_path)
+
+    run_table = dp.Group(
+        dp.Text("**All runs with this peak:**"),
+        dp.DataTable(all_runs, label="All runs with this peak")
+    )
+
     molecule_name = out_files.peak_molecule_name(peak_path)
     inchi = out_files.peak_inchi(peak_path)
     if not inchi == None:
@@ -203,17 +210,25 @@ def create_peak_report(peak_name, peaks_directory):
     report = [
         molecule_display,
         select_spectra,
+        run_table,
         select_table,
     ]
 
     return report, peak_name
 
-def create_run_report(run_name, run_directory, run_nr, settings):
+def create_run_report(run_name, run_directory, run_nr, peak_folder, settings):
     run_path = os.path.join(run_directory, run_name)
     chrom_ms, chrom_dad = out_files.run_chromatograms(run_path, settings)
     ms_chart = out_vis.altair_plot_chrom_ms(chrom_ms)
     dad_chart = out_vis.altair_plot_chrom_dad(chrom_dad)
     chrom_combined = alt.vconcat(ms_chart, dad_chart).resolve_scale(color="independent")
+
+    all_peaks = out_files.all_peaks_details(run_nr, peak_folder, settings)
+
+    peaks_table = dp.Group(
+        dp.Text("**All peaks within this run:**"),
+        dp.DataTable(all_peaks, label="All peaks within this run")
+    )
 
     chrom_group = dp.Group(
         dp.Plot(chrom_combined, label="Chromatograms")
@@ -226,7 +241,8 @@ def create_run_report(run_name, run_directory, run_nr, settings):
 
     report = [
         run_display,
-        chrom_group
+        chrom_group,
+        peaks_table,
     ]
 
     return report, run_nr
