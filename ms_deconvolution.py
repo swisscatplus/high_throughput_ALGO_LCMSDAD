@@ -250,7 +250,7 @@ def ms_entropy_peaks(filtered_entropy, plot = False):
     return filtered_peaks + filtered_peaks2  # adding local minima and local maxima
 
 
-def ms_summation(data, entropy_peaks, background_masses_list, plot = False):
+def ms_summation(data, entropy_peaks, background_masses_list):
     """
     Fct to determine peaks by summation beforehand.
     :param data:
@@ -518,7 +518,7 @@ def ms_peak_picking(data_sum, background_masses_list, plot = False):
                 indiced_to_remove = np.where(peaks == peak)[0]
                 peaks = np.delete(peaks, indiced_to_remove)"""  # This seems to slow down sifnigicantly -> replaced by following line
             # Maybe exchange this for individual background subtraction and checking if peaks exceeds threshold
-        filtered_peaks = [peak for peak in peaks if intensity[peak] > 50000]  # Maybe remove this.
+        filtered_peaks = [peak for peak in peaks if intensity[peak] > 50000]  # Maybe change threshold?
         peak_dict[i] = filtered_peaks
         if plot:
             time_index = np.round(np.array(data_sum.columns), 3)

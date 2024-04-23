@@ -22,6 +22,7 @@ def assign_peaks(full_analysis, method_name, settings):
     times_ms = np.array([peak.max for peak in ms_peaks])
     times_dad = np.array([peak.max for peak in dad_peaks])
     offset = estimate_offset(times_ms, times_dad)
+    # offset = 58  # TEMPORARY HARDSET BCS INSTRUMENTAL ERROR MAKES DETERMINATION IMPOSSIBLE
     print(offset)
     ms_peaks = correct_times_offset(ms_peaks, offset)
     times_ms = times_ms - offset
@@ -122,8 +123,8 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
     :param offset:
     :return:
     """
-    # Preset time tolerance of 8 secounds
-    tolerance = 8.
+    # Preset time tolerance of 5 secounds
+    tolerance = 5.
 
     matches = []
 
