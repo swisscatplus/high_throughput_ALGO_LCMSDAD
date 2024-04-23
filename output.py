@@ -1,6 +1,7 @@
 import os
 import output_files as out_files
 import output_visualization as out_vis
+import output_analytics as out_an
 import datapane as dp
 import altair as alt
 
@@ -71,8 +72,6 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
     if len(run_list) == 0:
         print("No runs to analyse.")
         return
-
-    # peaks_with_runs = out_files.associate_peaks_runs(run_folder, peak_folder, settings)
 
     """
     Handling of peaks
@@ -164,7 +163,10 @@ def create_peak_report(peak_name, peaks_directory):
 
     all_runs = out_files.all_runs_details(peak_path)
 
+    analysis_runs = out_an.determine_best_runs(peak_path)
+
     run_table = dp.Group(
+        dp.Text("Best runs for analysis (Run Nr.): " + str(analysis_runs)),
         dp.Text("**All runs with this peak:**"),
         dp.DataTable(all_runs, label="All runs with this peak")
     )
@@ -195,7 +197,7 @@ def create_peak_report(peak_name, peaks_directory):
             dp.Group(
                 dp.Text("File: " + peak_name),
                 dp.Text("Molecule: " + molecule_name),
-                dp.Text("Retention time: " + str(retention_time) + " s"),
+                dp.Text("Retention time [s]: " + str(retention_time)),
             ),
             dp.HTML(molecule_image_html),
             columns=2
@@ -204,7 +206,7 @@ def create_peak_report(peak_name, peaks_directory):
         molecule_display = dp.Group(
             dp.Text("File: " + peak_name),
             dp.Text("Molecule: " + molecule_name),
-            dp.Text("Retention time: " + str(retention_time) + " s"),
+            dp.Text("Retention time [s]: " + str(retention_time)),
         )
 
     report = [
