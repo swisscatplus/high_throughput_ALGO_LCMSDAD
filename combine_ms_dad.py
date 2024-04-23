@@ -10,7 +10,7 @@ Deal with MS and DAD peak picking and alignment of the corresponding signals.
 
 def assign_peaks(full_analysis, method_name, settings):
     """
-    Main function, to controll handling of the others.
+    Main function, to control handling of the others.
     :param full_analysis:
     :param settings:
     :return:

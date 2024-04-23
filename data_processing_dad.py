@@ -4,7 +4,7 @@ import numpy as np
 import initialize as init
 import os
 from netCDF4 import Dataset
-
+from scipy.signal import savgol_filter
 
 from mocca.user_interaction.campaign import HplcDadCampaign
 from mocca.user_interaction.user_objects import Gradient
@@ -99,7 +99,10 @@ class DAD_Spectra:
         :return:
         """
         self.raw_data = self.data.copy()
+        self.plot_dad()
         self.background_subtraction(background_signal, settings)
+        self.smoothing_function()
+        self.plot_dad()
         self.normalize()
         self.info["Processed"] = True
         return
@@ -128,6 +131,14 @@ class DAD_Spectra:
         self.info["Background correction"] = True
         self.data = merged_data
         self.info["Normalized"] = False
+        return
+
+    def smoothing_function(self):
+        """
+        Savitzky-Golay as standard filter.
+        """
+        # window length 25 means 8.3 nm (at .3nm resolution) for averaging window. Seems reasonable, uv peaks are broad anyway.
+        self.data["Intensity"] = savgol_filter(self.data["Intensity"], window_length=25, polyorder=3)
         return
 
 class DAD_full_chr:
