@@ -22,6 +22,7 @@ from datetime import datetime
 import combine_ms_dad as dadms
 import runs_handling as runs
 import output as out
+import optimization_script as opt_sc
 
 
 # Go back directories until we have project folder
@@ -165,11 +166,13 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
 run_name = "240405_Acetic_acid_HILIC-20.JSON"
-runs.analyse_single_run(run_name, method_name, background_method, settings)
+# runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example_run"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-out.create_analysis_report(settings, run_folder_name, peak_folder="2024-04-22_15-43-35", report_name="testreport")
+# out.create_analysis_report(settings, run_folder_name, peak_folder="2024-04-22_15-43-35", report_name="testreport")
+
+# opt_sc.comparison_dtb_named_files(settings)

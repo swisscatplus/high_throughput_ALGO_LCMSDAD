@@ -31,7 +31,7 @@ def databank_comparison_all(analyte_path, settings):
     """
     directory_project = settings["directory_project"]
     directory_database = os.path.join(directory_project, "Data_examples", "database")  # Database path
-    database_spectra = os.listdir(directory_database) # List of all files in the database
+    database_spectra = os.listdir(directory_database)  # List of all files in the database
 
     analyte_signal = sp_handling.load_signal_file(analyte_path)
     analyte_spectrum_ms = analyte_signal.ms_spectrum
@@ -42,8 +42,8 @@ def databank_comparison_all(analyte_path, settings):
     for database_entry in database_spectra:
         single_entry = os.path.join(directory_database, database_entry)
         if os.path.isfile(single_entry) and single_entry.lower().endswith(".cdf"):
-            dtb_spectrum = load_dtb_entry(single_entry) # extract file
-            dtb_spectrum_ms = dtb_spectrum.ms_spectrum # Obtains MS spectrum from signal object
+            dtb_spectrum = load_dtb_entry(single_entry)  # extract file
+            dtb_spectrum_ms = dtb_spectrum.ms_spectrum  # Obtains MS spectrum from signal object
             dtb_spectrum_dad = dtb_spectrum.dad_spectrum
             dtb_methods = dtb_spectrum.info["Methods"]
 
