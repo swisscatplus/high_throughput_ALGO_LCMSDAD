@@ -97,6 +97,7 @@ class MS_Spectra:
         Take an average of signal in a given bandwidth to account for low precision spectra.
         :return: The spectra with newly averaged signals.
         """
+        max_mass_value = self.data["m/z"].max()
         for mass in self.data["m/z"]:
             intensity = np.zeros(3)
             mass_vector = np.array([(mass-0.1), mass, (mass+0.1)])
@@ -120,10 +121,10 @@ class MS_Spectra:
                 if i == mass_max_index and not np.isnan(index[i]):
                     self.data.loc[index[i], "Intensity"] = total_intensity
                 else:
-                    if mass_vector[i] <= self.data["m/z"].iloc[-1] and not np.isnan(index[i]):
+                    if mass_vector[i] <= max_mass_value and not np.isnan(index[i]):  # changed to max_mass_value from last df index
                          try:
                             self.data.loc[index[i], "Intensity"] = 0
-                         except IndexError:
+                         except IndexError:  # Shouldn't actually occur
                             pass
         self.remove_zeros()
 
@@ -316,14 +317,7 @@ class MS_full_chr:
         mass_values = self.data["MS spectra"][index_0, 0]
         intensity_values = self.data["MS spectra"][index_0, 1]
 
-        print(accepted_masses)
-
         mass_filter_mask = [mass in accepted_masses for mass in mass_values]
-        mass_values_filtered = np.array(mass_values)[mass_filter_mask]
-        intensity_values_filtered = np.array(intensity_values)[mass_filter_mask]
-        print(mass_filter_mask)
-        print(mass_values_filtered)
-        print(intensity_values_filtered)
 
         extracted_ms = pd.DataFrame({
             "m/z": np.array(mass_values)[mass_filter_mask],  # changed to putting in np.array directly, shouldn't change df structure
@@ -335,11 +329,6 @@ class MS_full_chr:
             intensity_values = self.data["MS spectra"][i, 1]
 
             mass_filter_mask = [mass in accepted_masses for mass in mass_values]
-            mass_values_filtered = np.array(mass_values)[mass_filter_mask]
-            intensity_values_filtered = np.array(intensity_values)[mass_filter_mask]
-            print(mass_filter_mask)
-            print(mass_values_filtered)
-            print(intensity_values_filtered)
 
             extracted_ms_next = pd.DataFrame({
                 "m/z": np.array(mass_values)[mass_filter_mask],

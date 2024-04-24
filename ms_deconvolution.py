@@ -412,7 +412,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
 
     return ms_peak_list
 
-def fit_custom_peak_fct(name, intensity, time, plot = True, print_= True):
+def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
     """
     Fit the custom fct, defined as a skewed gaussian.
     :return:
@@ -440,7 +440,7 @@ def fit_custom_peak_fct(name, intensity, time, plot = True, print_= True):
     if print_:
         print("Name: " + str(name) + " R2: " + str(r_squared))
         print(*parameters)
-
+    plot = False
     if plot:
         plt.figure()
         plt.scatter(time, smoothed_intensity, label = "Peak data")
