@@ -54,8 +54,8 @@ def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, method
     else:
         ms_chr = dpr.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
 
-    peak_ms.data = ms_chr.extract_ms_timespan(peak_ms.left, peak_ms.right)  # For now extract full spectrum
-    # Later change so that only selected m/z values are put into the spectrum.
+    # peak_ms.data = ms_chr.extract_ms_timespan(peak_ms.left, peak_ms.right)  # This extracts full ms spectrum in timespan
+    peak_ms.data = ms_chr.extract_ms_timespan_values(peak_ms.left, peak_ms.right, peak_ms.mass_values)  # Only deconv. m/z values
 
     # Rewrite information that is important to signal file
     peak_ms.data.info["Signal Nr"] = str(signal_nr)

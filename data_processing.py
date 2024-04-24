@@ -295,9 +295,65 @@ class MS_full_chr:
             extracted_ms.fillna(0, inplace=True)
             extracted_ms["Intensity"] = extracted_ms["Intensity_a"] + extracted_ms["Intensity_b"]
             extracted_ms.drop(["Intensity_a", "Intensity_b"], axis=1, inplace=True)
-        extracted_ms["Intensity"] = extracted_ms["Intensity"]/(index_end - index_0 +1) # Norms the spectrum intensity
+        extracted_ms["Intensity"] = extracted_ms["Intensity"]/(index_end - index_0 +1)  # Norms the spectrum intensity
 
         return MS_Spectra(extracted_ms, init.import_spectra_info(time = ((time_end - time_0)/2), run_nr=self.chr_info["Run Nr"]))
+
+    def extract_ms_timespan_values(self, time_0, time_end, mass_ranges_decon):
+        time_0 = float(time_0)
+        time_end = float(time_end)
+
+        timespan = np.array(self.data["time"])
+        index_0 = np.argmin(np.abs(timespan - time_0))
+        index_end = np.argmin((np.abs(timespan - time_end)))
+
+        accepted_masses = []
+        for mass_range in mass_ranges_decon:
+            for mass in np.arange(mass_range-0.25, mass_range+3.25, 0.1):  # +3.25 to account for low intensity isotope peaks
+                # Low intensity isotope peaks often not detected in deconvolution but survive secondary background subt. and noise removal
+                accepted_masses.append(round(mass, 1))  # round to avoid floating point error
+
+        mass_values = self.data["MS spectra"][index_0, 0]
+        intensity_values = self.data["MS spectra"][index_0, 1]
+
+        print(accepted_masses)
+
+        mass_filter_mask = [mass in accepted_masses for mass in mass_values]
+        mass_values_filtered = np.array(mass_values)[mass_filter_mask]
+        intensity_values_filtered = np.array(intensity_values)[mass_filter_mask]
+        print(mass_filter_mask)
+        print(mass_values_filtered)
+        print(intensity_values_filtered)
+
+        extracted_ms = pd.DataFrame({
+            "m/z": np.array(mass_values)[mass_filter_mask],  # changed to putting in np.array directly, shouldn't change df structure
+            "Intensity": np.array(intensity_values)[mass_filter_mask],
+        })
+
+        for i in range(index_0 + 1, index_end + 1, 1):
+            mass_values = self.data["MS spectra"][i, 0]
+            intensity_values = self.data["MS spectra"][i, 1]
+
+            mass_filter_mask = [mass in accepted_masses for mass in mass_values]
+            mass_values_filtered = np.array(mass_values)[mass_filter_mask]
+            intensity_values_filtered = np.array(intensity_values)[mass_filter_mask]
+            print(mass_filter_mask)
+            print(mass_values_filtered)
+            print(intensity_values_filtered)
+
+            extracted_ms_next = pd.DataFrame({
+                "m/z": np.array(mass_values)[mass_filter_mask],
+                "Intensity": np.array(intensity_values)[mass_filter_mask],
+            })
+            extracted_ms = pd.merge(extracted_ms, extracted_ms_next, on="m/z", how="outer", suffixes=("_a", "_b"))
+            extracted_ms.fillna(0, inplace=True)
+            extracted_ms["Intensity"] = extracted_ms["Intensity_a"] + extracted_ms["Intensity_b"]
+            extracted_ms.drop(["Intensity_a", "Intensity_b"], axis=1, inplace=True)
+        extracted_ms["Intensity"] = extracted_ms["Intensity"] / (
+                    index_end - index_0 + 1)  # Norms the spectrum's intensity
+
+        return MS_Spectra(extracted_ms,
+                          init.import_spectra_info(time=((time_end - time_0) / 2), run_nr=self.chr_info["Run Nr"]))
 
 def create_new_background_spectra(background_filepath, method_name, settings):
     """

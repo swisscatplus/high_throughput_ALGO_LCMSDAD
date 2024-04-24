@@ -99,10 +99,8 @@ class DAD_Spectra:
         :return:
         """
         self.raw_data = self.data.copy()
-        self.plot_dad()
         self.background_subtraction(background_signal, settings)
         self.smoothing_function()
-        self.plot_dad()
         self.normalize()
         self.info["Processed"] = True
         return
@@ -118,7 +116,7 @@ class DAD_Spectra:
 
     def background_subtraction(self, background_signal, settings):
         """
-        Substract background spectrum from not normalized spectrum.
+        Subtract background spectrum from not normalized spectrum.
         :param background_spectra: Averaged background spectra, not normalized
         :return:
         """

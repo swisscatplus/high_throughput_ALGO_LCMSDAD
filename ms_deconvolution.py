@@ -24,6 +24,7 @@ Functions to pick peaks in MS chromatogram and consequently perform deconvolutio
 def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
 
     background_masses_list = load_background_masses_list(full_analysis.info["LC Method"], settings)
+    print(background_masses_list)
 
     entropy = np.zeros(shape=len(full_analysis.ms_data3d["MS spectra"]))
     ms_intensity = np.zeros(shape=len(full_analysis.ms_data3d["time"]))
@@ -411,7 +412,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
 
     return ms_peak_list
 
-def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False, print_= True):
+def fit_custom_peak_fct(name, intensity, time, plot = True, print_= True):
     """
     Fit the custom fct, defined as a skewed gaussian.
     :return:
@@ -422,7 +423,7 @@ def fit_custom_peak_fct(name, intensity, time, max_peak_width, plot = False, pri
     maximum_intensity = np.max(smoothed_intensity)
     smoothed_intensity = smoothed_intensity/maximum_intensity
 
-    # Define initial parameters and contrains
+    # Define initial parameters and constrains
     amplitude_guess = 1  # np.max(smoothed_intensity)
     mean_guess = np.argmax(smoothed_intensity)
     std_guess = 10
@@ -513,10 +514,6 @@ def ms_peak_picking(data_sum, background_masses_list, plot = False):
         """baseline = als_baseline(smoothed_intensity)
         corrected_intensity = smoothed_intensity - baseline"""
         peaks = find_peaks_cwt(smoothed_intensity, 10)  # try increasing width?
-        """for peak in peaks:
-            if intensity[peak] < 50000:
-                indiced_to_remove = np.where(peaks == peak)[0]
-                peaks = np.delete(peaks, indiced_to_remove)"""  # This seems to slow down sifnigicantly -> replaced by following line
             # Maybe exchange this for individual background subtraction and checking if peaks exceeds threshold
         filtered_peaks = [peak for peak in peaks if intensity[peak] > 50000]  # Maybe change threshold?
         peak_dict[i] = filtered_peaks
