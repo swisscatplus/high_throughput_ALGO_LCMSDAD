@@ -127,7 +127,6 @@ class MS_Spectra:
                          except IndexError:  # Shouldn't actually occur
                             pass
         self.remove_zeros()
-
         return
 
     def plot_spectra(self):

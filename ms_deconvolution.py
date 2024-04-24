@@ -390,7 +390,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
             limited_total_peak_intensity = total_peak_intensity[peak_left:peak_right]
             time_fits = range(len(limited_total_peak_intensity))
             try:
-                successful_fit, fit_parameters, peak_borders, r_squared, peak_integral = fit_custom_peak_fct(name, limited_total_peak_intensity, time_fits, max_peak_width)
+                successful_fit, fit_parameters, peak_borders, r_squared, peak_integral = fit_custom_peak_fct(name, limited_total_peak_intensity, time_fits)
             except RuntimeError:
                 print("Peak: " + str(name) + " did not converge.")
                 successful_fit = False
@@ -432,7 +432,7 @@ def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
     bounds = ([0, 0, 0, 0], [np.inf, time[-1], 100, 15])
 
     # Skewed gaussian fit
-    parameters, covariance =  curve_fit(model_peak, time, smoothed_intensity, p0=initial_conditions, bounds=bounds)
+    parameters, covariance = curve_fit(model_peak, time, smoothed_intensity, p0=initial_conditions, bounds=bounds)
     residual = smoothed_intensity - model_peak(time, *parameters)
     ss_red = np.sum(residual**2)
     ss_tot = np.sum((smoothed_intensity - np.mean(smoothed_intensity))**2)
@@ -440,7 +440,7 @@ def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
     if print_:
         print("Name: " + str(name) + " R2: " + str(r_squared))
         print(*parameters)
-    plot = False
+
     if plot:
         plt.figure()
         plt.scatter(time, smoothed_intensity, label = "Peak data")
