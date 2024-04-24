@@ -11,7 +11,7 @@ import create_file
 import data_processing_dad as dpr_dad
 import ms_deconvolution as msd
 
-def process_deconvoluted_peak(ms_spectrum, dad_spectrum, method, settings):
+def process_deconvoluted_peak(ms_spectrum, mass_range_decon, dad_spectrum, method, settings):
     """
     Take aligned spectra and create signal file based upon this.
     :param ms_spectrum:
@@ -21,7 +21,7 @@ def process_deconvoluted_peak(ms_spectrum, dad_spectrum, method, settings):
     """
     background_signal = load_background_spectra_signal(method,
                                                        settings)  # later give as input, requires preprocessed dtb
-    ms_spectrum.full_processing_ms(background_signal, settings)
+    ms_spectrum.full_processing_ms(background_signal, settings, mass_range_decon)
     dad_spectrum.full_processing_dad(background_signal, settings)
 
     create_file.create_signal_file(ms_spectrum, dad_spectrum, settings["directory_project"])
@@ -138,13 +138,16 @@ class MS_Spectra:
         plt.show()
         return
 
-    def full_processing_ms(self, background_signal, settings):
+    def full_processing_ms(self, background_signal, settings, mass_range_decon = []):
         """
         Simple command for full standardised processing, returns spectrum for data base comparison.
         :param threshold_noise:
+        :param mass_range_decon: Either False (no ms filter) or put in a list of m/z values (-> Filter)
         :return:
         """
         self.raw_data = self.data.copy()
+        if len(mass_range_decon) > 0:
+            self.deconv_mass_filter(mass_range_decon)  # This way the raw data is saved as complete dataset and more eff.
         self.noise_removal_threshold(settings)
         self.normalize()
         self.signal_smooving()
@@ -156,7 +159,7 @@ class MS_Spectra:
 
     def weighting_fct(self, settings):
         """
-        Apply a weighting function to the intensities of a given ms distributiom
+        Apply a weighting function to the intensities of a given ms distribution
         :param spectrum: The spectra as an MS_Spectra object
         :return: Spectrum with additional weighted intensity in the data
         ms_weighting_fct is predefined in settings (main.py)
@@ -231,6 +234,17 @@ class MS_Spectra:
         self.data.reset_index(drop = True, inplace = True)
         return
 
+    def deconv_mass_filter(self, mass_ranges_decon):
+        accepted_masses = []
+        for mass_range in mass_ranges_decon:
+            for mass in np.arange(mass_range - 0.25, mass_range + 3.25, 0.1):  # +3.25 to account for low intensity isotope peaks
+                # Low intensity isotope peaks often not detected in deconvolution but survive secondary background subt. and noise removal
+                accepted_masses.append(round(mass, 1))  # round to avoid floating point error
+
+        mass_filter_mask = [mass in accepted_masses for mass in self.data["m/z"]]
+        self.data["m/z"] = self.data["m/z"][mass_filter_mask]
+        self.data["Intensity"] = self.data["Intensity"][mass_filter_mask]
+        return
 
 class MS_full_chr:
     """

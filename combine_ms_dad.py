@@ -54,8 +54,8 @@ def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, method
     else:
         ms_chr = dpr.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
 
-    # peak_ms.data = ms_chr.extract_ms_timespan(peak_ms.left, peak_ms.right)  # This extracts full ms spectrum in timespan
-    peak_ms.data = ms_chr.extract_ms_timespan_values(peak_ms.left, peak_ms.right, peak_ms.mass_values)  # Only deconv. m/z values
+    peak_ms.data = ms_chr.extract_ms_timespan(peak_ms.left, peak_ms.right)  # This extracts full ms spectrum in timespan
+    # ms deconvolution values are applied within data processing later
 
     # Rewrite information that is important to signal file
     peak_ms.data.info["Signal Nr"] = str(signal_nr)
@@ -68,7 +68,7 @@ def create_signal_from_match(full_analysis, peak_dad, peak_ms, signal_nr, method
     peak_dad.data.info["Integral"] = peak_dad.integral
 
     # Make sure that the .info part contains the correct information. It goes into the signal file from there.
-    dpr.process_deconvoluted_peak(peak_ms.data, peak_dad.data, full_analysis.info["LC Method"], settings)
+    dpr.process_deconvoluted_peak(peak_ms.data, peak_ms.mass_values, peak_dad.data, full_analysis.info["LC Method"], settings)
     return
 
 def create_individual_peaks(full_analysis, settings):
