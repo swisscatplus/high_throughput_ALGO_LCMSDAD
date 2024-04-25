@@ -17,8 +17,8 @@ def comparison_dtb_named_files(settings):
     weighting_fct_types = ["None", "exponential", "exponential2", "logarithmic", "sin", "sin2"]
     file_headings = ["Comparison_type", "Similarity_true", "Similarity_false", "Diff_distribution",
                         "lowest_diff", "avg_diff"]
-    lower_limit_ft_range = range(20)
-    upper_limit_ft_range = range(670, 701)
+    lower_limit_ft_range = range(0, 30, 5)
+    upper_limit_ft_range = range(200, 701, 50)
 
     for folder in analyte_folders:
         csv_filename = "ms_optimization_" + folder + ".csv"

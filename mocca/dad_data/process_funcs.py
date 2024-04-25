@@ -129,16 +129,21 @@ def pick_peaks(compound_data, experiment, absorbance_threshold,
 
     peak_locs = get_peak_locs(new_data_thresh)
     merged_peaks = merge_peaks(summed_data, peak_locs)
-
+    print(merged_peaks)
     if peaks_high_pass:
         merged_peaks = [peak for peak in merged_peaks if
                         compound_data.time[peak.maximum] >= peaks_high_pass]
+        print("---")
+        print(peaks_high_pass)
+        print(merged_peaks)
     if peaks_low_pass:
         merged_peaks = [peak for peak in merged_peaks if
                         compound_data.time[peak.maximum] <= peaks_low_pass]
-
+        print("++++")
+        print(peaks_low_pass)
+        print(merged_peaks)
+    print(merged_peaks)
     merged_peaks = sorted(merged_peaks, key=lambda peak: peak.maximum)
-
     chromatogram = Chromatogram(experiment, compound_data)
     for idx, peak in enumerate(merged_peaks):
         chromatogram.insert_peak(PickedPeak(left=peak.left,
