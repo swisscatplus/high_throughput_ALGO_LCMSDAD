@@ -91,8 +91,8 @@ def estimate_offset(times_ms, times_dad):
     :return: Offset value
     """
     # Preset offset max and minimum:
-    min_offset = 2
-    max_offset = 20
+    min_offset = 0
+    max_offset = 10
 
     time_differences = np.abs(times_ms[:, None] - times_dad)
     flat_differences = time_differences.flatten()
