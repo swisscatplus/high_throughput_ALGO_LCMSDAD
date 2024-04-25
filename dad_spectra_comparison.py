@@ -121,7 +121,7 @@ def ft_similarity(spectra_1, spectra_2, settings):
     fft_intensities_2 = np.fft.fft(spectra_2.data["Intensity"])
 
     frequency_rate = spectra_1.data["Wavelength"][1]-spectra_1.data["Wavelength"][0]  # Gets frequency sampling rate from wavelength spacing
-    # We get the same number of frequencies as wavelengths [0,105]
+    # We get the same number of frequencies as wavelengths [0,701]
     fft_frequencies_1 = np.fft.fftfreq(fft_intensities_1.size, frequency_rate)
     fft_frequencies_2 = np.fft.fftfreq(fft_intensities_2.size, frequency_rate)
 
