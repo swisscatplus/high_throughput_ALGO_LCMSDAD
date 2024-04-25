@@ -43,6 +43,7 @@ def analyse_multiple_runs(run_folder_name, method_name, background_name, setting
 
     run_nr = 1
     for analysis_run_name in analysis_run_list:
+        print(analysis_run_name)
         run_path = os.path.join(run_folder_directory, analysis_run_name)
         if os.path.isfile(run_path) and run_path.lower().endswith(".json"):
             full_analysis = init.import_run_json(run_path, run_nr = str(run_nr), method=background_name)

@@ -15,6 +15,8 @@ def get_peak_data(peak):
     for all wavelengths. If the peak was offset-corrected, the left and right
     border are un-offset in order to access the correct data.
     """
+    if peak.left < 0:
+        return peak.dataset.data[:, 0:(peak.right + 1)]  # Bugfix in case peak.left <0, otherwise causes error in peak_trimmer due to empty data.
     return peak.dataset.data[:, peak.left:(peak.right + 1)]
 
 
