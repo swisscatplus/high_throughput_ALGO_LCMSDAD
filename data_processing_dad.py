@@ -34,7 +34,7 @@ def run_mocca(full_analysis, settings):
     trial_campaign.add_hplc_input(exp)
     settings_trial = Settings('custom',  # dont give wl high or low pass, not implemented for custom
                         absorbance_threshold=1500,  # default is 500, doesn't work well for us, could optimize this (also no gradient yet..)
-                        peaks_high_pass=1, peaks_low_pass=10,  # limits in retention time for peak detection.
+                        peaks_high_pass=1, peaks_low_pass=50,  # limits in retention time for peak detection.
                         spectrum_correl_thresh=0.99, relative_distance_thresh=0.0025)
     trial_campaign.process_all_hplc_input(settings_trial)
     # report(trial_campaign, report_path)  # gives error, could be from the missing gradient

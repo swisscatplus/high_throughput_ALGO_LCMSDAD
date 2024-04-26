@@ -145,7 +145,7 @@ def create_peak_file(signal_file_path, peak_folder_path, peak_nr):
     peak_file.close()
     return
 
-def create_signal_file(ms_spec, dad_spec, directory_project, plot = True):
+def create_signal_file(ms_spec, dad_spec, directory_project, plot = False):
     directory_sglfiles = os.path.join(directory_project, "Data_examples", "Signal_files", "Sgl_file")  # Database path
     file_name = directory_sglfiles + "_" + ms_spec.info["Run Nr"] + "_" + ms_spec.info["Signal Nr"] + ".cdf"
 
