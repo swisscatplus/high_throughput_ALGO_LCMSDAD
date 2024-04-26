@@ -126,7 +126,7 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         plt.plot(filtered_time, new_entropy)
         plt.show()
 
-    ms_peak_list = ms_summation(reduced_heatmap, entropy_peaks, background_masses_list)
+    ms_peak_list = ms_summation(reduced_heatmap, entropy_peaks, background_masses_list, settings)
     return ms_peak_list
 
 def determine_background_masses_list(full_analysis, ms_chr, settings):
@@ -251,7 +251,7 @@ def ms_entropy_peaks(filtered_entropy, plot = False):
     return filtered_peaks + filtered_peaks2  # adding local minima and local maxima
 
 
-def ms_summation(data, entropy_peaks, background_masses_list):
+def ms_summation(data, entropy_peaks, background_masses_list, settings):
     """
     Fct to determine peaks by summation beforehand.
     :param data:
@@ -264,7 +264,7 @@ def ms_summation(data, entropy_peaks, background_masses_list):
     new_indices = data_sum.index *0.5 + 0.25  # addition to correct that m/z gives the avg of the m/z kernel
     data_sum.set_index(new_indices, inplace=True)
 
-    peak_dict = ms_peak_picking(data_sum, background_masses_list)
+    peak_dict = ms_peak_picking(data_sum, background_masses_list, settings)
 
     peak_clusters, inverse_peaklist = determine_peak_clusters(peak_dict, max_peak_width)
     ms_peak_list = process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, max_peak_width)
@@ -496,13 +496,13 @@ def model_peak_lorentz(x, amplitude, x0, gamma, alpha):  # Currently not used
     skew_factor = 1+ alpha*(x-x0)
     return lorentzian * skew_factor
 
-def ms_peak_picking(data_sum, background_masses_list, plot = False):
+def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, print_ = False):
     """
     :return:
     """
     window = np.ones(5) / 5
     peak_dict = {}
-    for i in data_sum.index:  # [305:325] for actual peak
+    for i in data_sum.index:  # [:] select certain mass values
         intensity = np.array(data_sum.loc[i])
         if i in background_masses_list:
             intensity[:] = 0
@@ -515,7 +515,32 @@ def ms_peak_picking(data_sum, background_masses_list, plot = False):
         corrected_intensity = smoothed_intensity - baseline"""
         peaks = find_peaks_cwt(smoothed_intensity, 10)  # try increasing width?
             # Maybe exchange this for individual background subtraction and checking if peaks exceeds threshold
-        filtered_peaks = [peak for peak in peaks if intensity[peak] > 50000]  # Maybe change threshold?
+        if settings["ion_detection_mode"] == "negative":
+            peak_threshold = 15000
+        else:
+            peak_threshold = 50000
+        filtered_peaks = [peak for peak in peaks if smoothed_intensity[peak] > peak_threshold]  # Maybe change threshold?
+        # Changed to smoothed_intensity, so that peaks directly between the window frames, are not ignored due to random 0 at peak.
+        # -> readjust thresholds? Could be necessary to lower them. TEST! -> Yes, it is necessary
+        index_test = 0
+        if print_:
+            for x in intensity:
+                print("--------")
+                print("intensity")
+                print(x)
+                print(data_sum.columns[index_test])
+                print(index_test)
+                index_test += 1
+            index_test = 0
+            for x in smoothed_intensity:
+                print("--------")
+                print(x)
+                print(data_sum.columns[index_test])
+                print(index_test)
+                index_test +=1
+            print("mass: " + str(i))
+            print(peaks)
+            print(filtered_peaks)
         peak_dict[i] = filtered_peaks
         if plot:
             time_index = np.round(np.array(data_sum.columns), 3)
