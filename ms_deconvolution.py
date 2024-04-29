@@ -56,7 +56,7 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
                         value_index = ms_spectrum.data.index[ms_spectrum.data["m/z"] == value]
                         ms_single_values[value][index] = ms_spectrum.data["Intensity"][value_index]
         for mass, intensity in zip(ms_spectrum.data["m/z"], ms_spectrum.data["Intensity"]):
-            if mass in df_heatmap.index and intensity > 10000:
+            if mass in df_heatmap.index and intensity > 10000:  # 10k
                 df_heatmap.at[mass, i] = intensity  # Tried set to 1 for clustering, didn't work well...
         index += 1
     df_heatmap.fillna(0, inplace=True)
@@ -144,7 +144,7 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
 
         for mass, intensity in zip(ms_spectrum.data["m/z"], ms_spectrum.data["Intensity"]):
             if mass in df_heatmap.index and intensity > 10000:
-                df_heatmap.at[mass, i] = intensity  # Tried set to 1 for clustering, didn't work well...
+                df_heatmap.at[mass, i] = intensity
         index += 1
     df_heatmap.fillna(0, inplace=True)
     filtered_time = full_analysis.ms_data3d["time"]
@@ -518,7 +518,7 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
         if settings["ion_detection_mode"] == "negative":
             peak_threshold = 15000
         else:
-            peak_threshold = 50000
+            peak_threshold = 30000
         filtered_peaks = [peak for peak in peaks if smoothed_intensity[peak] > peak_threshold]  # Maybe change threshold?
         # Changed to smoothed_intensity, so that peaks directly between the window frames, are not ignored due to random 0 at peak.
         # -> readjust thresholds? Could be necessary to lower them. TEST! -> Yes, it is necessary
@@ -545,7 +545,7 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
         if plot:
             time_index = np.round(np.array(data_sum.columns), 3)
 
-            plt.plot(time_index, smoothed_intensity)
+            plt.plot(time_index, intensity)
             plt.title("m/z value: " + str(i))
             plt.show()
     return peak_dict

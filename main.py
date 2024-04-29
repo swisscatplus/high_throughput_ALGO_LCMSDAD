@@ -60,7 +60,7 @@ settings = {
     "FT_low_border": 0,  # Settings for cutting the FT spectrum before dot product; removes background; 0 is lowest
     "FT_upper_border": 53,  # To remove noise; 105 is highest (max wvl number)
     "nth_derivative": 1,  # Number of derivatives for comparison DAD.
-    "retention_time_interval": .5,  # Time interval to accept equal retention time. To be optimised.
+    "retention_time_interval": 5.,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
     "ion_detection_mode": "negative",  # positive or negative
@@ -69,6 +69,7 @@ settings = {
 print("Weighting function used for MS Spectra: " + settings["ms_weighting_fct"])
 method_name = "AceticAcid01"  # Change into settings later!
 background_method = "defaultNew"
+print(time.time())
 
 
 
@@ -165,14 +166,14 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dadms.assign_peaks(full_analysis, settings)
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
-run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-03.JSON"
-# runs.analyse_single_run(run_name, method_name, background_method, settings)
+run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-05.JSON"
+runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example_run02"
-runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
+# runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-out.create_analysis_report(settings, run_folder_name, report_name="report_suzuki3")  # peak_folder="2024-04-22_15-43-35"
-
+# out.create_analysis_report(settings, run_folder_name, report_name="report_suzuki5")  # peak_folder="2024-04-22_15-43-35"
+print(time.time())
 # opt_sc.comparison_dtb_named_files(settings)
