@@ -56,7 +56,6 @@ def merge_peaks(summed_data, peaks):
         List of all peaks in dictionary format with keys maximum, left, and right.
         Peaks that overlap are merged together into one BasePeak.
     """
-
     new_peaks = set()
     for cur_peak in peaks:
         overlapping_peaks = []
@@ -128,7 +127,8 @@ def pick_peaks(compound_data, experiment, absorbance_threshold,
     new_data_thresh[new_data_thresh < absorbance_threshold] = 0
 
     peak_locs = get_peak_locs(new_data_thresh)
-    merged_peaks = merge_peaks(summed_data, peak_locs)
+    peak_locs_cor = [peak for peak in peak_locs if (peak.right - peak.left) <= 1000]
+    merged_peaks = merge_peaks(summed_data, peak_locs_cor)
     if peaks_high_pass:
         merged_peaks = [peak for peak in merged_peaks if
                         compound_data.time[peak.maximum] >= peaks_high_pass]
@@ -136,10 +136,8 @@ def pick_peaks(compound_data, experiment, absorbance_threshold,
         merged_peaks = [peak for peak in merged_peaks if
                         compound_data.time[peak.maximum] <= peaks_low_pass]
 
-    # Peaks or such large intervals shouldn't naturally occur but are regarded
-    # as artefacts from dad peaks close be. They cause delay in peak deconvolution and are, thus, removed.
-    print(merged_peaks)
-    merged_peaks = [peak for peak in merged_peaks if (peak.right - peak.left) <= 1000]
+    # Peaks or such large intervals shouldn't naturally occur but are regarded as artefacts from dad peaks close by.
+    # (selected by sp peak_width) They cause delay in peak deconvolution and are, thus, removed.
     print(merged_peaks)
 
     merged_peaks = sorted(merged_peaks, key=lambda peak: peak.maximum)

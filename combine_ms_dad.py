@@ -123,7 +123,7 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
     :param offset:
     :return:
     """
-    # Preset time tolerance of 5 secounds
+    # Preset time tolerance of 5 seconds
     tolerance = 5.
 
     matches = []
