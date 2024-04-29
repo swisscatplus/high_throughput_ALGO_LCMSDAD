@@ -5,6 +5,7 @@ import data_processing as dpr
 import data_processing_dad as dpr_dad
 import initialize as init
 import output_files as out_files
+import numpy as np
 
 def determine_best_runs(peak_path):
     all_runs = out_files.all_runs_details(peak_path)
@@ -83,3 +84,19 @@ def compare_runs(run1_prop, run2_prop):
             return SyntaxError("Wrong syntax of run properties.")
     else:
         return SyntaxError("Wrong syntax of run properties.")
+
+def fill_all_runs(all_runs_details, number_of_runs):
+    total_runs_list = [number+1. for number in range(number_of_runs)]
+
+    for number in total_runs_list:
+        if number not in all_runs_details["Run Nr."].values:
+            new_row = {"Run Nr.": number,
+                       "Retention Time": np.NaN,
+                       "Pure": False,
+                       "Relative Purity": np.NaN,
+                       "Integral": np.NaN,
+                       }
+            all_runs_details = pd.concat([all_runs_details, pd.DataFrame([new_row])], ignore_index=True)
+    all_runs_details_sorted = all_runs_details.sort_values(by="Run Nr.")
+    all_runs_details_sorted.reset_index(drop=True, inplace=True)
+    return all_runs_details_sorted

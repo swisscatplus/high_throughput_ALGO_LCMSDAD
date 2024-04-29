@@ -182,3 +182,33 @@ def altair_plot_chrom_dad(chrom_dad):
         )
     )
     return alt.hconcat(left, right)
+
+def altair_heatmap_integral(all_runs_details):
+    number_columns = 5
+    column_nr = 1
+    row_nr = 1
+    column_positions = []
+    row_positions = []
+    for index in all_runs_details["Run Nr."].index:
+        column_positions.append(column_nr)
+        row_positions.append(row_nr)
+        column_nr += 1
+        if column_nr > number_columns:
+            column_nr = 1
+            row_nr += 1
+    all_runs_details["Column Position"] = column_positions
+    all_runs_details["Row Position"] = row_positions
+    all_runs_details["Run Nr."] = all_runs_details["Run Nr."].fillna(-1)
+
+    print(all_runs_details)
+
+    heatmap = alt.Chart(all_runs_details).mark_rect().encode(
+        x=alt.X("Column Position:O", title="Run Column"),
+        y=alt.Y("Row Position:O", title="Run Row"),
+        color=alt.Color("Integral:Q", title="Integral Value"),
+        tooltip=["Run Nr.:Q", "Integral"]
+    ).properties(
+        width=600,
+        height=300,
+    )
+    return heatmap

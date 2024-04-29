@@ -128,7 +128,7 @@ def pick_peaks(compound_data, experiment, absorbance_threshold,
 
     peak_locs = get_peak_locs(new_data_thresh)
     peak_locs_cor = [peak for peak in peak_locs if (peak.right - peak.left) <= 1000]
-    merged_peaks = merge_peaks(summed_data, peak_locs_cor)
+    merged_peaks = merge_peaks(summed_data, peak_locs)
     if peaks_high_pass:
         merged_peaks = [peak for peak in merged_peaks if
                         compound_data.time[peak.maximum] >= peaks_high_pass]

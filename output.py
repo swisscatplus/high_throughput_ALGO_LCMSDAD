@@ -78,9 +78,12 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
     """
 
     peak_report_list = []
+    peak_analytics_list = []
     for peak_name in peak_list:
         peak = create_peak_report(peak_name, peaks_directory)
         peak_report_list.append(peak)
+        peak_analytics = create_peak_heatmap(peak_name, peaks_directory, len(run_list))
+        peak_analytics_list.append(peak_analytics)
 
     peaks_groups = [dp.Group(*peak[0], label=peak[1]) for peak in peak_report_list]
     while len(peaks_groups) <= 1:
@@ -88,8 +91,19 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
             dp.Text("#")
         ))
 
+    peaks_analytic_groups = [dp.Group(*peak[0], label=peak[1]) for peak in peak_analytics_list]
+    while len(peaks_analytic_groups) <= 1:
+        peaks_analytic_groups.append(dp.Group(
+            dp.Text("#")
+        ))
+
     peak_rep_select = dp.Select(
         blocks=peaks_groups,
+        type=dp.SelectType.DROPDOWN
+    )
+
+    analytics_select = dp.Select(
+        blocks=peaks_analytic_groups,
         type=dp.SelectType.DROPDOWN
     )
 
@@ -129,7 +143,8 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
         label="Runs"
     )
     all_analysis_group = dp.Group(
-        dp.Text("Further Analysis"),
+        analytics_select,
+        dp.Text("#"),
         label="Analysis"
     )
 
@@ -248,3 +263,44 @@ def create_run_report(run_name, run_directory, run_nr, peak_folder, settings):
     ]
 
     return report, run_nr
+
+def create_peak_heatmap(peak_name, peaks_directory, number_of_runs):
+    peak_path = os.path.join(peaks_directory, peak_name)
+
+    all_runs_details = out_files.all_runs_details(peak_path)
+    all_runs_details = out_an.fill_all_runs(all_runs_details, number_of_runs)
+    heatmap_integral = out_vis.altair_heatmap_integral(all_runs_details)
+
+    molecule_name = out_files.peak_molecule_name(peak_path)
+    inchi = out_files.peak_inchi(peak_path)
+    if not inchi == None:
+        molecule_image_html = out_vis.draw_molecule(inchi)
+    else:
+        molecule_image_html = None
+
+    select_heatmap = dp.Select(blocks=[
+        dp.Plot(heatmap_integral, label="Integral Values"),
+        dp.Plot(heatmap_integral, label="Relative Purity Values"),
+    ])
+
+    if not molecule_image_html == None:
+        molecule_display = dp.Group(
+            dp.Group(
+                dp.Text("File: " + peak_name),
+                dp.Text("Molecule: " + molecule_name),
+            ),
+            dp.HTML(molecule_image_html),
+            columns=2
+        )
+    else:
+        molecule_display = dp.Group(
+            dp.Text("File: " + peak_name),
+            dp.Text("Molecule: " + molecule_name),
+        )
+
+    report = [
+        molecule_display,
+        select_heatmap,
+    ]
+
+    return report, peak_name
