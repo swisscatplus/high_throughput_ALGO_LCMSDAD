@@ -82,7 +82,7 @@ def create_analysis_report(settings, run_folder, peak_folder = None, report_name
     for peak_name in peak_list:
         peak = create_peak_report(peak_name, peaks_directory)
         peak_report_list.append(peak)
-        peak_analytics = create_peak_heatmap(peak_name, peaks_directory, len(run_list))
+        peak_analytics = create_peak_heatmap(peak_name, peaks_directory, len(run_list), settings)
         peak_analytics_list.append(peak_analytics)
 
     peaks_groups = [dp.Group(*peak[0], label=peak[1]) for peak in peak_report_list]
@@ -264,12 +264,13 @@ def create_run_report(run_name, run_directory, run_nr, peak_folder, settings):
 
     return report, run_nr
 
-def create_peak_heatmap(peak_name, peaks_directory, number_of_runs):
+def create_peak_heatmap(peak_name, peaks_directory, number_of_runs, settings):
     peak_path = os.path.join(peaks_directory, peak_name)
 
     all_runs_details = out_files.all_runs_details(peak_path)
     all_runs_details = out_an.fill_all_runs(all_runs_details, number_of_runs)
-    heatmap_integral = out_vis.altair_heatmap_integral(all_runs_details)
+    heatmap_integral = out_vis.altair_heatmap_integral(all_runs_details, settings["Number Columns"])
+    heatmap__relative_purity = out_vis.altair_heatmap_relative_purity(all_runs_details, settings["Number Columns"])
 
     molecule_name = out_files.peak_molecule_name(peak_path)
     inchi = out_files.peak_inchi(peak_path)
@@ -280,7 +281,7 @@ def create_peak_heatmap(peak_name, peaks_directory, number_of_runs):
 
     select_heatmap = dp.Select(blocks=[
         dp.Plot(heatmap_integral, label="Integral Values"),
-        dp.Plot(heatmap_integral, label="Relative Purity Values"),
+        dp.Plot(heatmap__relative_purity, label="Relative Purity Values"),
     ])
 
     if not molecule_image_html == None:

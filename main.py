@@ -64,7 +64,8 @@ settings = {
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
     "ion_detection_mode": "negative",  # positive or negative
-    "method_name": "AceticAcid01"
+    "method_name": "AceticAcid01",
+    "Number Columns": 5,  # Number for columns for heatmap visualization
 }
 print("Weighting function used for MS Spectra: " + settings["ms_weighting_fct"])
 method_name = "AceticAcid01"  # Change into settings later!

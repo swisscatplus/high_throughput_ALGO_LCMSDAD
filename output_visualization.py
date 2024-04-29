@@ -183,8 +183,7 @@ def altair_plot_chrom_dad(chrom_dad):
     )
     return alt.hconcat(left, right)
 
-def altair_heatmap_integral(all_runs_details):
-    number_columns = 5
+def altair_heatmap_integral(all_runs_details, number_columns):
     column_nr = 1
     row_nr = 1
     column_positions = []
@@ -198,17 +197,62 @@ def altair_heatmap_integral(all_runs_details):
             row_nr += 1
     all_runs_details["Column Position"] = column_positions
     all_runs_details["Row Position"] = row_positions
-    all_runs_details["Run Nr."] = all_runs_details["Run Nr."].fillna(-1)
+    all_runs_details["Run Nr"] = all_runs_details["Run Nr."].values  # Don't know why but necessary (otherwise Run Nr = NaN)
+    # Apparently the dot of the column name creates a problem..
 
-    print(all_runs_details)
-
+    min_integral_value = all_runs_details[all_runs_details["Integral"]>0]["Integral"].min()
     heatmap = alt.Chart(all_runs_details).mark_rect().encode(
         x=alt.X("Column Position:O", title="Run Column"),
         y=alt.Y("Row Position:O", title="Run Row"),
-        color=alt.Color("Integral:Q", title="Integral Value"),
-        tooltip=["Run Nr.:Q", "Integral"]
+        color=alt.Color("Integral:Q", title="Integral Value",
+                        scale=alt.Scale(domain=[0, min_integral_value, all_runs_details['Integral'].max()],
+                                        range=["#FFFFFF", "#440154", "#21908C", "#5DC863"]
+                                        # Distinct white colour for zero values
+                                        # "#FFFFFF", "#440154", "#21908C", "#5DC863" for white + "viridis"
+                                        # "#FFFFFF", "#6B8FB9", "#005072" for white + "purplebluegreen"
+                                        ),
+                        legend=alt.Legend(title="Integral")
+                        ),
+        tooltip=["Run Nr", "Integral"]
     ).properties(
         width=600,
-        height=300,
+        height=400,
+    )
+    return heatmap
+
+def altair_heatmap_relative_purity(all_runs_details, number_columns):
+    column_nr = 1
+    row_nr = 1
+    column_positions = []
+    row_positions = []
+    for index in all_runs_details["Run Nr."].index:
+        column_positions.append(column_nr)
+        row_positions.append(row_nr)
+        column_nr += 1
+        if column_nr > number_columns:
+            column_nr = 1
+            row_nr += 1
+    all_runs_details["Column Position"] = column_positions
+    all_runs_details["Row Position"] = row_positions
+    all_runs_details["Run Nr"] = all_runs_details["Run Nr."].values  # Don't know why but necessary (otherwise Run Nr = NaN)
+    # Apparently the dot of the column name creates a problem..
+
+    min_rp_value = all_runs_details[all_runs_details["Relative Purity"]>0]["Relative Purity"].min()
+    heatmap = alt.Chart(all_runs_details).mark_rect().encode(
+        x=alt.X("Column Position:O", title="Run Column"),
+        y=alt.Y("Row Position:O", title="Run Row"),
+        color=alt.Color("Relative Purity:Q", title="Relative Purity Value",
+                        scale=alt.Scale(domain=[0, min_rp_value, all_runs_details['Relative Purity'].max()],
+                                        range=["#FFFFFF", "#6B8FB9", "#005072"]
+                                        # Distinct white colour for zero values
+                                        # "#FFFFFF", "#440154", "#21908C", "#5DC863" for white + "viridis"
+                                        # "#FFFFFF", "#6B8FB9", "#005072" for white + "purplebluegreen"
+                                        ),
+                        legend=alt.Legend(title="Relative Purity")
+                        ),
+        tooltip=["Run Nr", "Relative Purity"]
+    ).properties(
+        width=600,
+        height=400,
     )
     return heatmap

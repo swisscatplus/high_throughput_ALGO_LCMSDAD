@@ -91,10 +91,10 @@ def fill_all_runs(all_runs_details, number_of_runs):
     for number in total_runs_list:
         if number not in all_runs_details["Run Nr."].values:
             new_row = {"Run Nr.": number,
-                       "Retention Time": np.NaN,
+                       "Retention Time": 0,
                        "Pure": False,
-                       "Relative Purity": np.NaN,
-                       "Integral": np.NaN,
+                       "Relative Purity": 0,
+                       "Integral": 0,
                        }
             all_runs_details = pd.concat([all_runs_details, pd.DataFrame([new_row])], ignore_index=True)
     all_runs_details_sorted = all_runs_details.sort_values(by="Run Nr.")
