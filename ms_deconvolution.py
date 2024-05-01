@@ -392,6 +392,8 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
             time_fits = range(len(limited_total_peak_intensity))
             try:
                 successful_fit, fit_parameters, peak_borders, r_squared, peak_integral = fit_custom_peak_fct(name, limited_total_peak_intensity, time_fits)
+                if len(masses) > 1 and r_squared > .5 and not successful_fit:
+                    ms_spr.superimposed_peak_deconvolution(limited_total_peak_intensity, time_fits, data_sum, masses, peak_left, peak_right)
             except RuntimeError:
                 print("Peak: " + str(name) + " did not converge.")
                 successful_fit = False
@@ -413,7 +415,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
 
     return ms_peak_list
 
-def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
+def fit_custom_peak_fct(name, intensity, time, plot=True, print_=True):
     """
     Fit the custom fct, defined as a skewed gaussian.
     :return:

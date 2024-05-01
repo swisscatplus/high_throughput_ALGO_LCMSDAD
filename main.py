@@ -167,10 +167,22 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
 run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-06.JSON"
-runs.analyse_single_run(run_name, method_name, background_method, settings)
+# runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example_run02"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
+
+"""
+Testing superimposed ms peak deco
+"""
+runs.delete_old_sgn_files(settings)
+json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_name)
+
+full_analysis = init.import_run_json(json_path, method=background_method)
+ms_chr = data_processing.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
+ms_peaks = msd.ms_create_peaks(full_analysis, ms_chr, settings)
+for peak in ms_peaks:
+    print(peak)
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
