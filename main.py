@@ -49,7 +49,6 @@ settings = {
     "threshold_ms_dot_product_sim": 1.,
     "threshold_ms_weighted_dp_sim": 1.,
     "threshold_ms_bhat1": 1.,
-    "User_Interface": False,
     "background folder": background_folder,
     "ms_algorithm": "all",  # Options: all, dot_product, weighted_dot_product, bhat1, entropy_sim
     "dad_algorithm": "all",  # Options: all,
@@ -63,7 +62,7 @@ settings = {
     "retention_time_interval": 5.,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "negative",  # positive or negative
+    "ion_detection_mode": "positive",  # positive or negative
     "method_name": "AceticAcid01",
     "Number Columns": 5,  # Number for columns for heatmap visualization
 }
@@ -168,13 +167,13 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
 run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-06.JSON"
-# runs.analyse_single_run(run_name, method_name, background_method, settings)
+runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example_run02"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-out.create_analysis_report(settings, run_folder_name, report_name="report_test", peak_folder="2024-04-29_14-10-20")  # peak_folder="2024-04-22_15-43-35"
+# out.create_analysis_report(settings, run_folder_name, report_name="suzuki_positive")  # peak_folder="2024-04-22_15-43-35"
 print(time.time())
 # opt_sc.comparison_dtb_named_files(settings)

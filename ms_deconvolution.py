@@ -14,6 +14,7 @@ import ms_spectra_comparison
 import pywt
 import os
 from netCDF4 import Dataset
+import ms_superimposed_peaks as ms_spr
 
 
 
@@ -453,7 +454,7 @@ def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
     relative_intensity = 0.25  # Cutoff left and right for the model peak
     def solving_model_borders(x):  # Function in fct bcs we need to access parameters and can't input them due to root_scalar
         """
-        Function to determin the left and right border of the peak by their relative height.
+        Function to determine the left and right border of the peak by their relative height.
         :return:
         """
         target_value = relative_intensity * 1  # 1 is amplitude since we normed the peak to this
