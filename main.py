@@ -24,7 +24,7 @@ import runs_handling as runs
 import output as out
 import optimization_script as opt_sc
 
-
+starttime = time.time()
 # Go back directories until we have project folder
 current_directory = os.getcwd()
 directory_project = os.path.abspath(os.path.join(current_directory, os.pardir))
@@ -175,17 +175,18 @@ run_folder_name = "example_run02"
 """
 Testing superimposed ms peak deco
 """
-runs.delete_old_sgn_files(settings)
+"""runs.delete_old_sgn_files(settings)
 json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_name)
 
 full_analysis = init.import_run_json(json_path, method=background_method)
 ms_chr = data_processing.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
 ms_peaks = msd.ms_create_peaks(full_analysis, ms_chr, settings)
 for peak in ms_peaks:
-    print(peak)
+    print(peak)"""
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-# out.create_analysis_report(settings, run_folder_name, report_name="suzuki_positive")  # peak_folder="2024-04-22_15-43-35"
+out.create_analysis_report(settings, run_folder_name, report_name="suzuki_w_ms_dectest", peak_folder="2024-05-02_15-53-51")  # peak_folder="2024-04-22_15-43-35"
 print(time.time())
 # opt_sc.comparison_dtb_named_files(settings)
+print(time.time()-starttime)

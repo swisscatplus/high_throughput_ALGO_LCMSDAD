@@ -417,8 +417,6 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                 ms_peak_list.append(new_ms_peak)
             elif len(nnmf_peaks)>0:
                 for nnmf_peak in nnmf_peaks:
-                    print("########")
-                    print(nnmf_peak)
                     # height needs to be parsed already as different total peak intensity
                     mean = time_index[round(nnmf_peak.fit_parameters[1] + peak_left)]  # testing here
                     stwd = nnmf_peak.fit_parameters[2]

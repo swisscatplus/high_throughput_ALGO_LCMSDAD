@@ -65,7 +65,7 @@ def compare_runs(run1_prop, run2_prop):
         return False
     elif run2_prop[0] and not run1_prop[0]:
         return True
-    elif run1_prop[0] and run2_prop[0]:
+    else:  # elif run1_prop[0] and run2_prop[0]:
         if run1_prop[1] >= run2_prop[1] and run1_prop[2] >= run2_prop[2]:
             return False
         elif run1_prop[1] < run2_prop[1] and run1_prop[2] < run2_prop[2]:
@@ -81,9 +81,9 @@ def compare_runs(run1_prop, run2_prop):
             else:
                 return True
         else:
+            print("Wrong syntax of run properties.")
             return SyntaxError("Wrong syntax of run properties.")
-    else:
-        return SyntaxError("Wrong syntax of run properties.")
+
 
 def fill_all_runs(all_runs_details, number_of_runs):
     total_runs_list = [number+1. for number in range(number_of_runs)]
