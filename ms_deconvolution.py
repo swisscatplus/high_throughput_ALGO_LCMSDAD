@@ -381,19 +381,21 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
             if peak_right >= len(total_peak_intensity):
                 peak_right = len(total_peak_intensity) - 1
             for mass in masses:
-                for sec_mass in data_sum.index:
+                for sec_mass in data_sum.index:  # Not sure why but necessary, avoid key_error
                     if mass == sec_mass:
                         total_peak_intensity[peak_left:peak_right] += data_sum.loc[mass].iloc[peak_left:peak_right]
             # print(name, masses)
             time_index = np.round(np.array(data_sum.columns), 3)
-            test_time = range(len(total_peak_intensity))
-            limited_time_index = time_index[peak_left:peak_right]
+            """test_time = range(len(total_peak_intensity))
+            limited_time_index = time_index[peak_left:peak_right]"""
             limited_total_peak_intensity = total_peak_intensity[peak_left:peak_right]
             time_fits = range(len(limited_total_peak_intensity))
+            nnmf_peaks = []
             try:
-                successful_fit, fit_parameters, peak_borders, r_squared, peak_integral = fit_custom_peak_fct(name, limited_total_peak_intensity, time_fits)
+                successful_fit, fit_parameters, peak_borders, r_squared, peak_integral = ms_spr.fit_custom_peak_fct(name, limited_total_peak_intensity, time_fits)
                 if len(masses) > 1 and r_squared > .5 and not successful_fit:
-                    ms_spr.superimposed_peak_deconvolution(limited_total_peak_intensity, time_fits, data_sum, masses, peak_left, peak_right)
+                    nnmf_peaks = ms_spr.superimposed_peak_deconvolution(time_fits, data_sum, masses, peak_left, peak_right)
+                    successful_fit = False
             except RuntimeError:
                 print("Peak: " + str(name) + " did not converge.")
                 successful_fit = False
@@ -410,94 +412,25 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                 peak_left_fit = time_index[round(peak_borders[0] + peak_left)]  # Replace peak borders by gaussian hitting baseline?
                 peak_right_fit = time_index[round(peak_borders[1] + peak_left)]
 
-                new_ms_peak = ms_peak(height, mean, stwd, skewness, masses, r_squared, peak_left_fit, peak_right_fit, peak_integral)
+                new_ms_peak = ms_peak(height, mean, stwd, skewness, masses, r_squared,
+                                      peak_left_fit, peak_right_fit, peak_integral)
                 ms_peak_list.append(new_ms_peak)
-
+            elif len(nnmf_peaks)>0:
+                for nnmf_peak in nnmf_peaks:
+                    print("########")
+                    print(nnmf_peak)
+                    # height needs to be parsed already as different total peak intensity
+                    mean = time_index[round(nnmf_peak.fit_parameters[1] + peak_left)]  # testing here
+                    stwd = nnmf_peak.fit_parameters[2]
+                    skewness = nnmf_peak.fit_parameters[3]
+                    peak_left_fit = time_index[
+                        round(nnmf_peak.peak_borders[0] + peak_left)]  # Replace peak borders by gaussian hitting baseline?
+                    peak_right_fit = time_index[round(nnmf_peak.peak_borders[1] + peak_left)]
+                    new_ms_peak = ms_peak(nnmf_peak.height, mean, stwd, skewness, nnmf_peak.masses, nnmf_peak.r_squared, peak_left_fit,
+                                          peak_right_fit, nnmf_peak.peak_integral, nnmf_decon=True)
+                    print(new_ms_peak)
+                    ms_peak_list.append(new_ms_peak)
     return ms_peak_list
-
-def fit_custom_peak_fct(name, intensity, time, plot=True, print_=True):
-    """
-    Fit the custom fct, defined as a skewed gaussian.
-    :return:
-    """
-    window = np.ones(5)/5
-    avg_intensity = np.convolve(intensity, window, "same")
-    smoothed_intensity = savgol_filter(avg_intensity, window_length=4, polyorder=3)
-    maximum_intensity = np.max(smoothed_intensity)
-    smoothed_intensity = smoothed_intensity/maximum_intensity
-
-    # Define initial parameters and constrains
-    amplitude_guess = 1  # np.max(smoothed_intensity)
-    mean_guess = np.argmax(smoothed_intensity)
-    std_guess = 10
-    skewness_guess = .1
-    initial_conditions = [amplitude_guess, mean_guess, std_guess, skewness_guess]
-    bounds = ([0, 0, 0, 0], [np.inf, time[-1], 100, 15])
-
-    # Skewed gaussian fit
-    parameters, covariance = curve_fit(model_peak, time, smoothed_intensity, p0=initial_conditions, bounds=bounds)
-    residual = smoothed_intensity - model_peak(time, *parameters)
-    ss_red = np.sum(residual**2)
-    ss_tot = np.sum((smoothed_intensity - np.mean(smoothed_intensity))**2)
-    r_squared = 1- (ss_red/ss_tot)
-    if print_:
-        print("Name: " + str(name) + " R2: " + str(r_squared))
-        print(*parameters)
-
-    if plot:
-        plt.figure()
-        plt.scatter(time, smoothed_intensity, label = "Peak data")
-        plt.plot(time, model_peak(time, *parameters), label = "Fit")
-        plt.xlabel("Scan Number")
-        plt.ylabel("Normalized Intensity")
-        plt.legend()
-        plt.show()
-
-    relative_intensity = 0.25  # Cutoff left and right for the model peak
-    def solving_model_borders(x):  # Function in fct bcs we need to access parameters and can't input them due to root_scalar
-        """
-        Function to determine the left and right border of the peak by their relative height.
-        :return:
-        """
-        target_value = relative_intensity * 1  # 1 is amplitude since we normed the peak to this
-        return model_peak(x, *parameters) - target_value
-
-    if r_squared > .90:
-        solution_left = root_scalar(solving_model_borders, bracket=[parameters[1] - 10*parameters[2], parameters[1]], method="brentq")
-        solution_right = root_scalar(solving_model_borders, bracket=[parameters[1], parameters[1] + 10*parameters[2]], method="brentq")
-        peak_borders = (solution_left.root, solution_right.root)
-        peak_integral, integral_error = quad(model_peak, -np.inf, np.inf\
-                             , args=(parameters[0], parameters[1], parameters[2], parameters[3]))
-        peak_integral = peak_integral * maximum_intensity
-        return True, parameters, peak_borders, r_squared, peak_integral
-    else:
-        return False, parameters, None, r_squared, None
-
-def model_peak(x, amplitude, mean, stddev, alpha):
-    """
-    For now use skewed gaussian
-    :param x:
-    :param amplitude:
-    :param mean:
-    :param stddev:
-    :param alpha: Parameter to describe skewness
-    :return:
-    """
-    return amplitude * skewnorm.pdf(x, alpha, loc=mean, scale=stddev)
-
-def model_peak_lorentz(x, amplitude, x0, gamma, alpha):  # Currently not used
-    """
-    Skewed lorentzian as model peak.
-    :param x:
-    :param amplitude:
-    :param x0:
-    :param gamma:
-    :param alpha: Skewness, >0 -> goes to the right
-    :return:
-    """
-    lorentzian = amplitude * (gamma**2/(x-x0)**2 + gamma**2)
-    skew_factor = 1+ alpha*(x-x0)
-    return lorentzian * skew_factor
 
 def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, print_ = False):
     """
@@ -586,9 +519,9 @@ def extract_background_masses_list(background_file_path):
 
 class ms_peak:
     """
-    Class defined to hold the necessary information on an ms_peak
+    Class defined to hold the necessary information on a ms_peak
     """
-    def __init__(self, height, mean, stdw, skewness, mass_values, r_squared, left, right, integral):
+    def __init__(self, height, mean, stdw, skewness, mass_values, r_squared, left, right, integral, nnmf_decon = False):
         self.height = height
         self.max = mean
         self.stdw = stdw
@@ -601,6 +534,7 @@ class ms_peak:
             self.pure = True
         else:
             self.pure = False
+        self.nnmf = nnmf_decon
 
     def __repr__(self):
         kws = [f"{key}={value!r}" for key, value in self.__dict__.items()]
