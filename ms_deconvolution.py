@@ -428,7 +428,6 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                     peak_right_fit = time_index[round(nnmf_peak.peak_borders[1] + peak_left)]
                     new_ms_peak = ms_peak(nnmf_peak.height, mean, stwd, skewness, nnmf_peak.masses, nnmf_peak.r_squared, peak_left_fit,
                                           peak_right_fit, nnmf_peak.peak_integral, nnmf_decon=True)
-                    print(new_ms_peak)
                     ms_peak_list.append(new_ms_peak)
     return ms_peak_list
 
@@ -530,7 +529,7 @@ class ms_peak:
         self.left = left
         self.right = right
         self.integral = integral
-        if r_squared > 0.99:  # Later this needs to be evaluated by a different criteria
+        if r_squared > 0.95 and not nnmf_decon:  # Later this needs to be evaluated by a different criteria
             self.pure = True
         else:
             self.pure = False

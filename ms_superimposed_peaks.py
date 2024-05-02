@@ -105,7 +105,7 @@ def fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right, plot_
             print("Peak (NNMF): " + str(masses) + " did not converge.")
             successful_fit = False
         if successful_fit:
-            peak = NNMFPeak(fit_parameters, peak_borders, r_squared, peak_integral, height)
+            peak = NNMFPeak(fit_parameters, peak_borders, r_squared, peak_integral, height, masses)
             nnmf_peaks.append(peak)
     return nnmf_peaks
 
@@ -234,12 +234,13 @@ def model_peak_lorentz(x, amplitude, x0, gamma, alpha):  # Currently not used
     return lorentzian * skew_factor
 
 class NNMFPeak:
-    def __init__(self, fit_parameters, peak_borders, r_squared, peak_integral, height):
+    def __init__(self, fit_parameters, peak_borders, r_squared, peak_integral, height, masses):
         self.fit_parameters = fit_parameters
         self.peak_borders = peak_borders
         self.r_squared = r_squared
         self.peak_integral = peak_integral
         self.height = height
+        self.masses = [float(mass) for mass in masses]
 
     def __repr__(self):
         kws = [f"{key}={value!r}" for key, value in self.__dict__.items()]
