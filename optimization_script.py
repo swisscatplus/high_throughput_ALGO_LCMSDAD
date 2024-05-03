@@ -1,6 +1,8 @@
 import os
 import csv
 import json
+import pandas as pd
+import numpy as np
 import data_processing_dad as dpr_dad
 import data_processing as dpr
 import ms_deconvolution as msd
@@ -8,6 +10,105 @@ import signal_peak_handling as sp_handling
 from databank_handling import load_dtb_entry
 import ms_spectra_comparison as ms_comp
 import dad_spectra_comparison as dad_comp
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+
+def plot_optimization(csv_file_name, settings):
+    directory_project = settings["directory_project"]
+    csv_file_path = os.path.join(directory_project, "Data_examples", csv_file_name)
+
+    data = pd.read_csv(csv_file_path)
+    print(data.head())
+    for column in data.columns:
+        if not column == "Comparison_type":
+            data[column] = data[column].apply(json.loads)
+
+    # Plot heatmap average difference
+    df_avg_diff = extract_avg_column(data, "avg_diff")
+    plot_heatmap_all_alg(df_avg_diff, "Averages Difference")
+    df_min_avg_diff = extract_min_column(data, "avg_diff")
+    plot_heatmap_all_alg(df_min_avg_diff, "Minimum avg Difference")
+
+    # Plot heatmap lowest difference
+    df_low_diff = extract_avg_column(data, "lowest_diff")
+    plot_heatmap_all_alg(df_low_diff, "Lowest Difference Average")
+    df_min_low_diff = extract_min_column(data, "lowest_diff")
+    plot_heatmap_all_alg(df_min_low_diff, "Minimum Lowest Difference")
+    return
+
+def extract_min_column(data, column_name):
+    indices = ["Dot Product", "Weighted Dot Product", "Bhat 1", "Entropy Similarity", "All"]
+    df = pd.DataFrame({
+        "Algorithm": indices,
+    })
+    df.set_index("Algorithm", inplace=True)
+    index = 0
+    df["None"] = np.nan
+    df["Exponential"] = np.nan
+    df["Exponential 2"] = np.nan
+    df["Logarithmic"] = np.nan
+    df["sin"] = np.nan
+    df["sin^2"] = np.nan
+    algorithm_index = 0
+    for values in data[column_name]:
+        values = [value for value in values if type(value) == float]
+        if data["Comparison_type"][index].endswith("_None"):
+            df["None"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_exponential"):
+            df["Exponential"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_exponential2"):
+            df["Exponential 2"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_logarithmic"):
+            df["Logarithmic"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_sin"):
+            df["sin"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_sin2"):
+            df["sin^2"].loc[indices[algorithm_index]] = np.min(values)
+        index += 1
+        algorithm_index += 1
+        if algorithm_index > 4:
+            algorithm_index = 0
+    return df
+def extract_avg_column(data, column_name):
+    indices = ["Dot Product", "Weighted Dot Product", "Bhat 1", "Entropy Similarity", "All"]
+    df = pd.DataFrame({
+        "Algorithm": indices,
+    })
+    df.set_index("Algorithm", inplace=True)
+    index = 0
+    df["None"] = np.nan
+    df["Exponential"] = np.nan
+    df["Exponential 2"] = np.nan
+    df["Logarithmic"] = np.nan
+    df["sin"] = np.nan
+    df["sin^2"] = np.nan
+    algorithm_index = 0
+    for values in data[column_name]:
+        values = [value for value in values if type(value) == float]
+        if data["Comparison_type"][index].endswith("_None"):
+            df["None"].loc[indices[algorithm_index]] = np.average(values)
+        elif data["Comparison_type"][index].endswith("_exponential"):
+            df["Exponential"].loc[indices[algorithm_index]] = np.average(values)
+        elif data["Comparison_type"][index].endswith("_exponential2"):
+            df["Exponential 2"].loc[indices[algorithm_index]] = np.average(values)
+        elif data["Comparison_type"][index].endswith("_logarithmic"):
+            df["Logarithmic"].loc[indices[algorithm_index]] = np.average(values)
+        elif data["Comparison_type"][index].endswith("_sin"):
+            df["sin"].loc[indices[algorithm_index]] = np.average(values)
+        elif data["Comparison_type"][index].endswith("_sin2"):
+            df["sin^2"].loc[indices[algorithm_index]] = np.average(values)
+        index += 1
+        algorithm_index += 1
+        if algorithm_index > 4:
+            algorithm_index = 0
+    return df
+
+def plot_heatmap_all_alg(df, name):
+    sns.heatmap(df, annot=True, cmap="coolwarm")
+    plt.title(name)
+    plt.show()
+    return
 
 def comparison_dtb_named_files(settings):
 

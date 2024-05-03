@@ -167,7 +167,7 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
 run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-06.JSON"
-runs.analyse_single_run(run_name, method_name, background_method, settings)
+# runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example_run02"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
@@ -186,7 +186,10 @@ for peak in ms_peaks:
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-out.create_analysis_report(settings, run_folder_name, report_name="test")  # peak_folder="2024-04-22_15-43-35"
+# out.create_analysis_report(settings, run_folder_name, report_name="test")  # peak_folder="2024-04-22_15-43-35"
+
+opt_sc.plot_optimization("ms_optimization_peaks_dtb_comp.csv", settings)
+
 print(time.time())
 # opt_sc.comparison_dtb_named_files(settings)
 print(time.time()-starttime)
