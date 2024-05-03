@@ -3,16 +3,32 @@ import csv
 import json
 import pandas as pd
 import numpy as np
-import data_processing_dad as dpr_dad
-import data_processing as dpr
-import ms_deconvolution as msd
-import signal_peak_handling as sp_handling
 from databank_handling import load_dtb_entry
 import ms_spectra_comparison as ms_comp
 import dad_spectra_comparison as dad_comp
 from matplotlib import pyplot as plt
 import seaborn as sns
 
+
+def plot_optimization_dad(csv_file_name, settings):
+    directory_project = settings["directory_project"]
+    csv_file_path = os.path.join(directory_project, "Data_examples", csv_file_name)
+
+    data = pd.read_csv(csv_file_path)
+    print(data.head())
+    for column in data.columns:
+        if not column == "Comparison_type":
+            data[column] = data[column].apply(json.loads)
+
+    plot_extract_histogram(data, "total", "Similarity_false")
+
+    # Plot heatmap average difference
+    df_ft_avg = extract_ft_avg(data, "avg_diff")
+    plot_heatmap_all_alg(df_ft_avg, "Fourier Transform Average Difference")
+    df_ft_min = extract_ft_min(data, "avg_diff")
+    plot_heatmap_all_alg(df_ft_min, "Fourier Transform Min Average Difference")
+
+    return
 
 def plot_optimization_ms(csv_file_name, settings):
     directory_project = settings["directory_project"]
@@ -27,15 +43,15 @@ def plot_optimization_ms(csv_file_name, settings):
     plot_extract_histogram(data, "dot_product_sin2", "Similarity_false")
 
     # Plot heatmap average difference
-    df_avg_diff = extract_avg_column(data, "avg_diff")
+    df_avg_diff = extract_avg_column_ms(data, "avg_diff")
     plot_heatmap_all_alg(df_avg_diff, "Averages Difference")
-    df_min_avg_diff = extract_min_column(data, "avg_diff")
+    df_min_avg_diff = extract_min_column_ms(data, "avg_diff")
     plot_heatmap_all_alg(df_min_avg_diff, "Minimum avg Difference")
 
     # Plot heatmap lowest difference
-    df_low_diff = extract_avg_column(data, "lowest_diff")
+    df_low_diff = extract_avg_column_ms(data, "lowest_diff")
     plot_heatmap_all_alg(df_low_diff, "Lowest Difference Average")
-    df_min_low_diff = extract_min_column(data, "lowest_diff")
+    df_min_low_diff = extract_min_column_ms(data, "lowest_diff")
     plot_heatmap_all_alg(df_min_low_diff, "Minimum Lowest Difference")
     return
 
@@ -57,7 +73,91 @@ def plot_extract_histogram(data, algorithm_name, type_name):
     plt.ylabel("Counts")
     plt.show()
     return
-def extract_min_column(data, column_name):
+
+def extract_min_column_dad(data, column_name):
+    indices = ["pearson", "dot_product", "ft_low_lim_0_up_lim_200", "derivative_n_1", "derivative_n_2", "derivative_n_3", "derivative_n_4"]
+    df = pd.DataFrame({
+        "Algorithm": indices,
+    })
+    df.set_index("Algorithm", inplace=True)
+    index = 0
+    for i in indices:
+        df[i] = np.nan
+    algorithm_index = 0
+    for values in data[column_name]:
+        values = [value for value in values if type(value) == float]
+        if data["Comparison_type"][index].endswith("_None"):
+            df["None"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_exponential"):
+            df["Exponential"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_exponential2"):
+            df["Exponential 2"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_logarithmic"):
+            df["Logarithmic"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_sin"):
+            df["sin"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_sin2"):
+            df["sin^2"].loc[indices[algorithm_index]] = np.min(values)
+        index += 1
+        algorithm_index += 1
+        if algorithm_index > 4:
+            algorithm_index = 0
+    return df
+
+def extract_ft_avg(data, column_name):
+    indices = [str(low_lim) for low_lim in range(0, 30, 5)]
+    columns = [str(up_lim) for up_lim in range(200, 750, 50)]
+    df = pd.DataFrame({
+        "Lower Limit": indices,
+    })
+    df.set_index("Lower Limit", inplace=True)
+    index = 0
+    for up_lim in columns:
+        df[up_lim] = np.nan
+
+    indices_index = 0
+    columns_index = 0
+    for values in data[column_name]:
+        values = [value for value in values if type(value) == float]
+        if data["Comparison_type"][index].startswith(f"ft_low_lim_{indices[indices_index]}"):
+            if data["Comparison_type"][index].endswith(f"up_lim_{columns[columns_index]}"):
+                df[columns[columns_index]].loc[indices[indices_index]] = np.average(values)
+                columns_index += 1
+        if columns_index > 10:
+            columns_index = 0
+            indices_index += 1
+        if indices_index > 5:
+            indices_index = 0
+        index += 1
+    return df
+
+def extract_ft_min(data, column_name):
+    indices = [str(low_lim) for low_lim in range(0, 30, 5)]
+    columns = [str(up_lim) for up_lim in range(200, 750, 50)]
+    df = pd.DataFrame({
+        "Lower Limit": indices,
+    })
+    df.set_index("Lower Limit", inplace=True)
+    index = 0
+    for up_lim in columns:
+        df[up_lim] = np.nan
+
+    indices_index = 0
+    columns_index = 0
+    for values in data[column_name]:
+        values = [value for value in values if type(value) == float]
+        if data["Comparison_type"][index].startswith(f"ft_low_lim_{indices[indices_index]}"):
+            if data["Comparison_type"][index].endswith(f"up_lim_{columns[columns_index]}"):
+                df[columns[columns_index]].loc[indices[indices_index]] = np.min(values)
+                columns_index += 1
+        if columns_index > 10:
+            columns_index = 0
+            indices_index += 1
+        if indices_index > 5:
+            indices_index = 0
+        index += 1
+    return df
+def extract_min_column_ms(data, column_name):
     indices = ["Dot Product", "Weighted Dot Product", "Bhat 1", "Entropy Similarity", "All"]
     df = pd.DataFrame({
         "Algorithm": indices,
@@ -90,7 +190,7 @@ def extract_min_column(data, column_name):
         if algorithm_index > 4:
             algorithm_index = 0
     return df
-def extract_avg_column(data, column_name):
+def extract_avg_column_ms(data, column_name):
     indices = ["Dot Product", "Weighted Dot Product", "Bhat 1", "Entropy Similarity", "All"]
     df = pd.DataFrame({
         "Algorithm": indices,
