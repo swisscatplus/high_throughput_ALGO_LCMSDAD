@@ -61,27 +61,15 @@ def databank_comparison_all(analyte_path, settings):
             if equal_method:
                 if equal_ms_spectra and equal_dad_spectra and equal_retention_time:
                     print("Database Hit!")
-                    if not getattr(analyte_file, "dtb_hits") == "":
-                        print("There are several dtb hits for this peak.")
-                        analyte_file.several_hits = "Yes"
-                        current_hits = getattr(analyte_file, "dtb_hits")
-                        new_hits = current_hits + " and " + dtb_spectrum.info["Molecule Name"]
-                        analyte_file.dtb_hits = new_hits
-
-                        current_hits_inchi = getattr(analyte_file, "dtb_hits_inchi")
-                        new_hits_inchi = current_hits_inchi + " and " + dtb_spectrum.info["Molecule InChI"]
-                        analyte_file.dtb_hits_inchi = new_hits_inchi
-                    else:
-                        analyte_file.dtb_hits = dtb_spectrum.info["Molecule Name"]
-                        analyte_file.dtb_hits_inchi = dtb_spectrum.info["Molecule InChI"]
-            else:
-                if equal_ms_spectra and equal_dad_spectra:
-                    print("Both MS and DAD are equal.")
-                    current_hits = getattr(analyte_file.groups["dtb hits different method"], "dtb_hits")
+                    add_molecule_to_analyte(analyte_file, dtb_spectrum)
+                    current_hits = getattr(analyte_file.groups["dtb hits with retention time"], "dtb_hits")
                     new_hits = current_hits + dtb_spectrum.info["Molecule Name"] + ", "
-                    analyte_file.groups["dtb hits different method"].dtb_hits = new_hits
-                    # add to molecule list of peak
-            if equal_ms_spectra and not equal_dad_spectra:
+                    analyte_file.groups["dtb hits with retention time"].dtb_hits = new_hits
+            if equal_ms_spectra and equal_dad_spectra:
+                print("Both MS and DAD are equal.")
+                add_molecule_to_analyte(analyte_file, dtb_spectrum)
+                # add to molecule list of peak
+            elif equal_ms_spectra and not equal_dad_spectra:
                 print("Only equal MS.")
                 current_hits = getattr(analyte_file.groups["dtb hits only MS"], "dtb_hits")
                 new_hits = current_hits + dtb_spectrum.info["Molecule Name"] + ", "
@@ -95,6 +83,23 @@ def databank_comparison_all(analyte_path, settings):
             analyte_file.close()
         else:  # Prints error in case there is a wrong file
             print("!!! File " + single_entry + " is not a supported database file type!")
+    return
+
+def add_molecule_to_analyte(analyte_file, dtb_spectrum):
+    print("Database Hit!")
+    if not getattr(analyte_file, "dtb_hits") == "":
+        print("There are several dtb hits for this peak.")
+        analyte_file.several_hits = "Yes"
+        current_hits = getattr(analyte_file, "dtb_hits")
+        new_hits = current_hits + " and " + dtb_spectrum.info["Molecule Name"]
+        analyte_file.dtb_hits = new_hits
+
+        current_hits_inchi = getattr(analyte_file, "dtb_hits_inchi")
+        new_hits_inchi = current_hits_inchi + " and " + dtb_spectrum.info["Molecule InChI"]
+        analyte_file.dtb_hits_inchi = new_hits_inchi
+    else:
+        analyte_file.dtb_hits = dtb_spectrum.info["Molecule Name"]
+        analyte_file.dtb_hits_inchi = dtb_spectrum.info["Molecule InChI"]
     return
 
 def load_dtb_entry(dtb_entry_path, processed = True):

@@ -134,7 +134,7 @@ def create_peak_file(signal_file_path, peak_folder_path, peak_nr):
     peak_file.dtb_hits = ""
     peak_file.dtb_hits_inchi = ""
     peak_file.several_hits = "No"
-    hits_different_method = peak_file.createGroup("dtb hits different method")
+    hits_different_method = peak_file.createGroup("dtb hits with retention time")
     hits_different_method.dtb_hits = ""
     hits_only_ms = peak_file.createGroup("dtb hits only MS")
     hits_only_ms.dtb_hits = ""
