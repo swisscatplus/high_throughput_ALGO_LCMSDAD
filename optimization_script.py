@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 
-def plot_optimization(csv_file_name, settings):
+def plot_optimization_ms(csv_file_name, settings):
     directory_project = settings["directory_project"]
     csv_file_path = os.path.join(directory_project, "Data_examples", csv_file_name)
 
@@ -23,6 +23,8 @@ def plot_optimization(csv_file_name, settings):
     for column in data.columns:
         if not column == "Comparison_type":
             data[column] = data[column].apply(json.loads)
+
+    plot_extract_histogram(data, "dot_product_sin2", "Similarity_false")
 
     # Plot heatmap average difference
     df_avg_diff = extract_avg_column(data, "avg_diff")
@@ -37,6 +39,24 @@ def plot_optimization(csv_file_name, settings):
     plot_heatmap_all_alg(df_min_low_diff, "Minimum Lowest Difference")
     return
 
+def plot_extract_histogram(data, algorithm_name, type_name):
+    index = 0
+    histogram_data = []
+    for values in data[type_name]:
+        if algorithm_name == "total":  # total for addition of all rows
+            histogram_data += [value for value in values if type(value) == float]
+        else:
+            if data["Comparison_type"][index] == algorithm_name:
+                histogram_data = [value for value in values if type(value) == float]
+        index += 1
+    if len(histogram_data) == 0:
+        raise ValueError("Wrong algorithm name or type name")
+    sns.histplot(histogram_data, kde=True)
+    plt.title(f"Histogram of {type_name} for {algorithm_name}")
+    plt.xlabel("Score")
+    plt.ylabel("Counts")
+    plt.show()
+    return
 def extract_min_column(data, column_name):
     indices = ["Dot Product", "Weighted Dot Product", "Bhat 1", "Entropy Similarity", "All"]
     df = pd.DataFrame({
