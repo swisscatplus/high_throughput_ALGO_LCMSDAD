@@ -28,6 +28,12 @@ def plot_optimization_dad(csv_file_name, settings):
     df_ft_min = extract_ft_min(data, "avg_diff")
     plot_heatmap_all_alg(df_ft_min, "Fourier Transform Min Average Difference")
 
+    df_others_min = extract_min_column_dad(data, "avg_diff")
+    plot_heatmap_all_alg(df_others_min, "DAD Algorithms Average Difference")
+
+    df_others_avg = extract_avg_column_dad(data, "avg_diff")
+    plot_heatmap_all_alg(df_others_avg, "DAD Algorithms Average Difference")
+
     return
 
 def plot_optimization_ms(csv_file_name, settings):
@@ -35,7 +41,6 @@ def plot_optimization_ms(csv_file_name, settings):
     csv_file_path = os.path.join(directory_project, "Data_examples", csv_file_name)
 
     data = pd.read_csv(csv_file_path)
-    print(data.head())
     for column in data.columns:
         if not column == "Comparison_type":
             data[column] = data[column].apply(json.loads)
@@ -83,25 +88,35 @@ def extract_min_column_dad(data, column_name):
     index = 0
     for i in indices:
         df[i] = np.nan
-    algorithm_index = 0
+    indices_index = 0
     for values in data[column_name]:
         values = [value for value in values if type(value) == float]
-        if data["Comparison_type"][index].endswith("_None"):
-            df["None"].loc[indices[algorithm_index]] = np.min(values)
-        elif data["Comparison_type"][index].endswith("_exponential"):
-            df["Exponential"].loc[indices[algorithm_index]] = np.min(values)
-        elif data["Comparison_type"][index].endswith("_exponential2"):
-            df["Exponential 2"].loc[indices[algorithm_index]] = np.min(values)
-        elif data["Comparison_type"][index].endswith("_logarithmic"):
-            df["Logarithmic"].loc[indices[algorithm_index]] = np.min(values)
-        elif data["Comparison_type"][index].endswith("_sin"):
-            df["sin"].loc[indices[algorithm_index]] = np.min(values)
-        elif data["Comparison_type"][index].endswith("_sin2"):
-            df["sin^2"].loc[indices[algorithm_index]] = np.min(values)
+        if data["Comparison_type"][index].startswith(indices[indices_index]):
+            df.loc[indices[indices_index]] = np.min(values)
+            indices_index += 1
+        if indices_index > 6:
+            indices_index = 0
         index += 1
-        algorithm_index += 1
-        if algorithm_index > 4:
-            algorithm_index = 0
+    return df
+
+def extract_avg_column_dad(data, column_name):
+    indices = ["pearson", "dot_product", "ft_low_lim_0_up_lim_200", "derivative_n_1", "derivative_n_2", "derivative_n_3", "derivative_n_4"]
+    df = pd.DataFrame({
+        "Algorithm": indices,
+    })
+    df.set_index("Algorithm", inplace=True)
+    index = 0
+    for i in indices:
+        df[i] = np.nan
+    indices_index = 0
+    for values in data[column_name]:
+        values = [value for value in values if type(value) == float]
+        if data["Comparison_type"][index].startswith(indices[indices_index]):
+            df.loc[indices[indices_index]] = np.average(values)
+            indices_index += 1
+        if indices_index > 6:
+            indices_index = 0
+        index += 1
     return df
 
 def extract_ft_avg(data, column_name):
