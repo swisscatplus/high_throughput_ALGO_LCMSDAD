@@ -187,9 +187,10 @@ for peak in ms_peaks:
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
 # out.create_analysis_report(settings, run_folder_name, report_name="test")  # peak_folder="2024-04-22_15-43-35"
+
+# opt_sc.comparison_dtb_named_files(settings)
 opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
-opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
+# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
 
 print(time.time())
-# opt_sc.comparison_dtb_named_files(settings)
 print(time.time()-starttime)

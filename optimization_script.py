@@ -15,7 +15,6 @@ def plot_optimization_dad(csv_file_name, settings):
     csv_file_path = os.path.join(directory_project, "Data_examples", csv_file_name)
 
     data = pd.read_csv(csv_file_path)
-    print(data.head())
     for column in data.columns:
         if not column == "Comparison_type":
             data[column] = data[column].apply(json.loads)
@@ -121,7 +120,7 @@ def extract_avg_column_dad(data, column_name):
 
 def extract_ft_avg(data, column_name):
     indices = [str(low_lim) for low_lim in range(0, 30, 5)]
-    columns = [str(up_lim) for up_lim in range(200, 750, 50)]
+    columns = [str(up_lim) for up_lim in range(25, 500, 25)]
     df = pd.DataFrame({
         "Lower Limit": indices,
     })
@@ -138,7 +137,7 @@ def extract_ft_avg(data, column_name):
             if data["Comparison_type"][index].endswith(f"up_lim_{columns[columns_index]}"):
                 df[columns[columns_index]].loc[indices[indices_index]] = np.average(values)
                 columns_index += 1
-        if columns_index > 10:
+        if columns_index > 18:
             columns_index = 0
             indices_index += 1
         if indices_index > 5:
@@ -148,7 +147,7 @@ def extract_ft_avg(data, column_name):
 
 def extract_ft_min(data, column_name):
     indices = [str(low_lim) for low_lim in range(0, 30, 5)]
-    columns = [str(up_lim) for up_lim in range(200, 750, 50)]
+    columns = [str(up_lim) for up_lim in range(25, 500, 25)]
     df = pd.DataFrame({
         "Lower Limit": indices,
     })
@@ -165,7 +164,7 @@ def extract_ft_min(data, column_name):
             if data["Comparison_type"][index].endswith(f"up_lim_{columns[columns_index]}"):
                 df[columns[columns_index]].loc[indices[indices_index]] = np.min(values)
                 columns_index += 1
-        if columns_index > 10:
+        if columns_index > 18:
             columns_index = 0
             indices_index += 1
         if indices_index > 5:
@@ -254,7 +253,7 @@ def comparison_dtb_named_files(settings):
     file_headings = ["Comparison_type", "Similarity_true", "Similarity_false", "Diff_distribution",
                         "lowest_diff", "avg_diff"]
     lower_limit_ft_range = range(0, 30, 5)
-    upper_limit_ft_range = range(200, 701, 50)
+    upper_limit_ft_range = range(25, 500, 25)
 
     for folder in analyte_folders:
         csv_filename = "ms_optimization_" + folder + ".csv"
