@@ -19,18 +19,18 @@ def plot_optimization_dad(csv_file_name, settings):
         if not column == "Comparison_type":
             data[column] = data[column].apply(json.loads)
 
-    plot_extract_histogram(data, "total", "Similarity_false")
+    plot_extract_histogram(data, "total", "avg_diff")
 
     # Plot heatmap average difference
-    df_ft_avg = extract_ft_avg(data, "avg_diff")
+    df_ft_avg = extract_ft_avg(data, "lowest_diff")
     plot_heatmap_all_alg(df_ft_avg, "Fourier Transform Average Difference")
-    df_ft_min = extract_ft_min(data, "avg_diff")
+    df_ft_min = extract_ft_min(data, "lowest_diff")
     plot_heatmap_all_alg(df_ft_min, "Fourier Transform Min Average Difference")
 
-    df_others_min = extract_min_column_dad(data, "avg_diff")
+    df_others_min = extract_min_column_dad(data, "lowest_diff")
     plot_heatmap_all_alg(df_others_min, "DAD Algorithms Average Difference")
 
-    df_others_avg = extract_avg_column_dad(data, "avg_diff")
+    df_others_avg = extract_avg_column_dad(data, "lowest_diff")
     plot_heatmap_all_alg(df_others_avg, "DAD Algorithms Average Difference")
 
     return

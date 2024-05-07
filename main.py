@@ -190,7 +190,7 @@ for peak in ms_peaks:
 
 # opt_sc.comparison_dtb_named_files(settings)
 opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
-# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
+opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
 
 print(time.time())
 print(time.time()-starttime)
