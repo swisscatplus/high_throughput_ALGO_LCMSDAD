@@ -244,7 +244,7 @@ def plot_heatmap_all_alg(df, name):
     plt.show()
     return
 
-def comparison_dtb_named_files(settings):
+def comparison_dtb_named_files(settings, processed = True):
 
     analyte_folders = ["peaks_dtb_comp"]
     comparison_types_ms = ["dot_product", "weighted_dot_product", "bhat1", "entropy_sim", "all"]
@@ -265,7 +265,7 @@ def comparison_dtb_named_files(settings):
             settings["ms_weighting_fct"] = weighting_fct
             for comparison_type in comparison_types_ms:
                 settings["ms_algorithm"] = comparison_type
-                scores = compare_analyte_dtb_ms(folder, settings)
+                scores = compare_analyte_dtb_ms(folder, settings, processed)
                 with open(csv_filepath, "a", newline="") as csvfile:
                     writer = csv.DictWriter(csvfile, fieldnames=file_headings)
                     writer.writerow({
@@ -290,7 +290,7 @@ def comparison_dtb_named_files(settings):
                     for upper_limit in upper_limit_ft_range:
                         settings["FT_low_border"] = lower_limit
                         settings["FT_upper_border"] = upper_limit
-                        scores = compare_analyte_dtb_dad(folder, settings)
+                        scores = compare_analyte_dtb_dad(folder, settings, processed)
                         with open(csv_filepath, "a", newline="") as csvfile:
                             writer = csv.DictWriter(csvfile, fieldnames=file_headings)
                             writer.writerow({
@@ -304,7 +304,7 @@ def comparison_dtb_named_files(settings):
             elif comparison_type == "derivative":
                 for nth in range(1, 5):
                     settings["nth_derivative"] = nth
-                    scores = compare_analyte_dtb_dad(folder, settings)
+                    scores = compare_analyte_dtb_dad(folder, settings, processed)
                     with open(csv_filepath, "a", newline="") as csvfile:
                         writer = csv.DictWriter(csvfile, fieldnames=file_headings)
                         writer.writerow({
@@ -322,7 +322,7 @@ def comparison_dtb_named_files(settings):
                         for upper_limit in upper_limit_ft_range:
                             settings["FT_low_border"] = lower_limit
                             settings["FT_upper_border"] = upper_limit
-                            scores = compare_analyte_dtb_dad(folder, settings)
+                            scores = compare_analyte_dtb_dad(folder, settings, processed)
                             with open(csv_filepath, "a", newline="") as csvfile:
                                 writer = csv.DictWriter(csvfile, fieldnames=file_headings)
                                 writer.writerow({
@@ -335,7 +335,7 @@ def comparison_dtb_named_files(settings):
                                     file_headings[5]: json.dumps(scores[4])
                                 })
             else:
-                scores = compare_analyte_dtb_dad(folder, settings)
+                scores = compare_analyte_dtb_dad(folder, settings, processed)
                 with open(csv_filepath, "a", newline="") as csvfile:
                     writer = csv.DictWriter(csvfile, fieldnames=file_headings)
                     writer.writerow({
