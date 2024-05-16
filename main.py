@@ -170,7 +170,7 @@ run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-06.JSON"
 # runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "example_run02"
-# runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
+runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 """
 Testing superimposed ms peak deco
