@@ -217,21 +217,45 @@ def import_run_json(path, run_nr = str(1), method = None):
     if measurement_document[3]["measurement identifier"] == "DAD1I":
         dad_data3d = measurement_document[3]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
         ms_data3d = measurement_document[4]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
-        plus_minus_acquisition = True
+        if measurement_document[1]["measurement identifier"] == "ELS1A":
+            elsd_data = measurement_document[1]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
+            elsd_acquisition = True
+            plus_minus_acquisition = False
+        else:
+            elsd_acquisition = False
+            plus_minus_acquisition = True
     elif measurement_document[2]["measurement identifier"] == "DAD1I":
         dad_data3d = measurement_document[2]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
         ms_data3d = measurement_document[3]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
         plus_minus_acquisition = False
+        elsd_acquisition = False
     elif measurement_document[4]["measurement identifier"] == "DAD1I":
         dad_data3d = measurement_document[4]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
         ms_data3d = measurement_document[5]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
+        if measurement_document[2]["measurement identifier"] == "ELS1A":
+            elsd_data = measurement_document[1]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
+            elsd_acquisition = True
+            plus_minus_acquisition = False
+        elif measurement_document[1]["measurement identifier"] == "ELS1A":
+            elsd_data = measurement_document[1]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
+            elsd_acquisition = True
+            plus_minus_acquisition = True
+        else:
+            elsd_acquisition = False
+            plus_minus_acquisition = True
+    elif measurement_document[5]["measurement identifier"] == "DAD1I":
+        dad_data3d = measurement_document[5]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
+        ms_data3d = measurement_document[6]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
         plus_minus_acquisition = True
+        if measurement_document[2]["measurement identifier"] == "ELS1A":
+            elsd_data = measurement_document[2]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
+            elsd_acquisition = True
     else:
         raise KeyError("The structure of the data file doesn't align with initialize."
                        "Investigate the location of the 3D data cubes.")
 
     # first parse the 3D ms data
-    chromatogram_ms = np.empty((len(ms_data3d), 2)) # Initialize array for data.
+    chromatogram_ms = np.empty((len(ms_data3d), 2))  # Initialize array for data.
     ms_data = np.empty((len(ms_data3d), 2), dtype=object)
 
     for i in range(len(ms_data3d)):
@@ -281,7 +305,7 @@ def import_run_json(path, run_nr = str(1), method = None):
     info["Name"] = measurement_document[0]["sample document"]["written name"]
 
     info["plus_minus_acq"] = plus_minus_acquisition
-
+    # raise SystemExit  # For testing initialize only
     return full_analysis(full_chromatogram_ms, full_chromatogram_dad, info)
 
 class full_analysis:

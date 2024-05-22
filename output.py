@@ -4,7 +4,7 @@ import output_visualization as out_vis
 import output_analytics as out_an
 import datapane as dp
 import altair as alt
-
+alt.data_transformers.enable('vegafusion')
 
 def dtb_molecule_list(settings):
     directory_project = settings["directory_project"]

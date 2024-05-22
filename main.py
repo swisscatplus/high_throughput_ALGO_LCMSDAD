@@ -91,8 +91,8 @@ To create new background file, enter path here, change the name and uncomment th
 ---------------------------------------------------------
 """
 background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   "240416_VT_Lot3-ACN_MS_acetic_acid-01.JSON")
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
+                                   "240502-test_colonne_Poroshell_C18_after_backflushed.rslt_MeOH-2024-05-02_10-48-29+02-00-02.dx.JSON")
+# data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
 
 
@@ -166,10 +166,10 @@ extracted_ms = ms_chr.extract_ms_timespan(peak_info["start_time"], peak_info["en
 # dadms.assign_peaks(full_analysis, settings)
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
-run_name = "240416_VT_Lot3-ACN_MS_acetic_acid-06.JSON"
-runs.analyse_single_run(run_name, method_name, background_method, settings)
+run_name = "240502-test_colonne_Poroshell_C18_after_backflushed.rslt_R_clorophenylpropanol-2024-05-02_11-05-20+02-00-03.dx.JSON"
+# runs.analyse_single_run(run_name, method_name, background_method, settings)
 
-run_folder_name = "example_run02"
+run_folder_name = "testnewexport"
 # runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 """
@@ -186,11 +186,11 @@ for peak in ms_peaks:
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-# out.create_analysis_report(settings, run_folder_name, report_name="test")  # peak_folder="2024-04-22_15-43-35"
+out.create_analysis_report(settings, run_folder_name, report_name="testnewexport", peak_folder="2024-05-22_10-00-49")  # peak_folder="2024-04-22_15-43-35"
 
 # opt_sc.comparison_dtb_named_files(settings)
-opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
-opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
+# opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
+# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
 
 print(time.time())
 print(time.time()-starttime)
