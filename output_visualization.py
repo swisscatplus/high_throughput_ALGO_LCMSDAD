@@ -5,7 +5,7 @@ from rdkit.Chem import Draw
 from PIL import Image
 import io
 import base64
-
+import pandas as pd
 
 def plot_ms_spectrum(ms_spectrum):
     plt.vlines(ms_spectrum.data["m/z"], ymin=0, ymax=ms_spectrum.data["Intensity"])
@@ -19,7 +19,21 @@ def plot_dad_spectrum(dad_spectrum):
     plt.show()
     return
 
+def reduce_msspectrum_size(data, threshold):
+    threshold_value = data["Intensity"].median() * threshold
+    filtered_data = data[data["Intensity"] >= threshold_value]
+    return filtered_data
+
 def altair_plot_ms(ms_spectrum, processed):
+    # ensure less than 5k rows for altair plotting:
+    initial_rows = len(ms_spectrum.data.index)
+    threshold = 0.001  # 0.1 % as initial value
+    while len(ms_spectrum.data.index) >= 5000:
+        ms_spectrum.data = reduce_msspectrum_size(ms_spectrum.data, threshold)
+        threshold += 0.001  # 0.1 % as step size
+    if initial_rows >= 5000:
+        print(f"The unprocessed ms spectrum was cut off by a threshold of {threshold} to enable altair plotting.")
+
     brush = alt.selection_interval(encodings=["x", "y"])
     if processed:
         base_chart = alt.Chart(ms_spectrum.data).mark_bar(size=2).encode(  # size to control bar line width
@@ -60,8 +74,9 @@ def altair_plot_ms(ms_spectrum, processed):
             align='center'
         )
     )
+    chart = alt.hconcat(left, right)
 
-    return alt.hconcat(left, right)
+    return chart
 
 def altair_plot_dad(dad_spectrum, processed):
     brush = alt.selection_interval(encodings=["x", "y"])
@@ -105,7 +120,9 @@ def altair_plot_dad(dad_spectrum, processed):
             align='center'
         )
     )
-    return alt.hconcat(left, right)
+    chart = alt.hconcat(left, right)
+
+    return chart
 
 def draw_molecule(inchi):
     molecule = Chem.MolFromInchi(inchi)

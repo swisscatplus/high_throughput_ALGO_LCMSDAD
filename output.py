@@ -4,7 +4,7 @@ import output_visualization as out_vis
 import output_analytics as out_an
 import datapane as dp
 import altair as alt
-alt.data_transformers.enable('vegafusion')
+# dp.enable_logging()
 
 def dtb_molecule_list(settings):
     directory_project = settings["directory_project"]
@@ -194,10 +194,10 @@ def create_peak_report(peak_name, peaks_directory):
         molecule_image_html = None
 
     select_spectra = dp.Select(blocks=[
-        dp.Plot(ms_chart, label="Unprocessed MS Spectrum"),
-        dp.Plot(ms_chart_proc, label="Processed MS Spectrum"),
-        dp.Plot(dad_chart, label="Unprocessed DAD Spectrum"),
-        dp.Plot(dad_chart_proc, label="Processed DAD Spectrum")
+        dp.Plot(data=ms_chart, label="Unprocessed MS Spectrum"),
+        dp.Plot(data=ms_chart_proc, label="Processed MS Spectrum"),
+        dp.Plot(data=dad_chart, label="Unprocessed DAD Spectrum"),
+        dp.Plot(data=dad_chart_proc, label="Processed DAD Spectrum")
     ])
 
     select_table = dp.Select(blocks=[
