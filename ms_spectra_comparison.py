@@ -103,7 +103,7 @@ def bhattacharya1_distance(spectrum_a, spectrum_b):
 def comparison_ms(analyte_spectra, dtb_spectrum_ms, settings):
     """
     Iterates spectra comparison for all databank entries for the MS spectra.
-    :return: Annotates any spectra match in the analytes' spectrum info dictrionary.
+    :return: Annotates any spectra match in the analytes' spectrum info dictionary.
     """
     dot_product_comp = False
     entropy_comp = False
