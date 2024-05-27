@@ -135,7 +135,6 @@ def calculate_erros(W, H, intensities):
 
 def group_mass_values(H_df, threshold):
     mass_groups = []
-
     for mass in H_df.columns:
         group = set([mass])
         candidate_masses = set(list(H_df.columns)) - {mass}

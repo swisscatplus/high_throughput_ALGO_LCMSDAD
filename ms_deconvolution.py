@@ -381,7 +381,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
             if peak_right >= len(total_peak_intensity):
                 peak_right = len(total_peak_intensity) - 1
             for mass in masses:
-                for sec_mass in data_sum.index:  # Not sure why but necessary, avoid key_error
+                for sec_mass in data_sum.index:  # Not sure why, but necessary to avoid key_error
                     if mass == sec_mass:
                         total_peak_intensity[peak_left:peak_right] += data_sum.loc[mass].iloc[peak_left:peak_right]
             # print(name, masses)
