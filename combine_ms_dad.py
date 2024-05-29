@@ -91,7 +91,7 @@ def estimate_offset(times_ms, times_dad):
     """
     # Preset offset max and minimum:
     min_offset = 0
-    max_offset = 10
+    max_offset = 20
 
     time_differences = np.abs(times_ms[:, None] - times_dad)
     flat_differences = time_differences.flatten()
@@ -222,6 +222,12 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
             total_integral_ms = sum(integrals_ordered_ms)
             rela_integrals_dad = integrals_ordered_dad/total_integral_dad
             rela_integrals_ms = integrals_ordered_ms/total_integral_ms
+
+            print(relevant_times_ms)
+            print(relevant_times_dad)
+            print("ordered:")
+            print(times_ordered_ms)
+            print(times_ordered_dad)
 
             min_index_ms = -1
             for index in range(len(times_ordered_dad)):

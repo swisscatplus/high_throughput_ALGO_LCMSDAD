@@ -192,11 +192,16 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
     new_indices = data_sum.index * 0.5 + 0.25  # addition to correct that m/z gives the avg of the m/z kernel
     data_sum.set_index(new_indices, inplace=True)
 
+    if settings["ion_detection_mode"] == "negative":
+        background_threshold = 5000000
+    else:
+        background_threshold = 10000000
+
     list_background_masses = []
-    for i in data_sum.index:  # [305:325] for actual peak
+    for i in data_sum.index:
         intensity = np.array(data_sum.loc[i])
         total_intensity = np.sum(intensity)
-        if total_intensity > 10000000:  # Modify depending on positive or negative mode
+        if total_intensity > background_threshold:
             list_background_masses.append(i)
     return list_background_masses
 
@@ -449,7 +454,7 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
         peaks = find_peaks_cwt(smoothed_intensity, 10)  # try increasing width?
             # Maybe exchange this for individual background subtraction and checking if peaks exceeds threshold
         if settings["ion_detection_mode"] == "negative":
-            peak_threshold = 15000
+            peak_threshold = 10000  # 15 000 before
         else:
             peak_threshold = 30000
         filtered_peaks = [peak for peak in peaks if smoothed_intensity[peak] > peak_threshold]  # Maybe change threshold?

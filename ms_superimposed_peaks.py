@@ -96,7 +96,7 @@ def superimposed_peak_deconvolution(time, data_sum, masses, peak_left, peak_righ
     nnmf_peaks = fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right)
     return nnmf_peaks
 
-def fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right, plot_=True):
+def fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right, plot_=False):
     total_peak_intensity = np.zeros(shape=len(data_sum.columns))
     nnmf_peaks = []
     for masses in mass_groups:
@@ -154,7 +154,7 @@ def group_mass_values(H_df, threshold):
     mass_groups = [set(group) for group in mass_groups]  # To convert back to list
     return mass_groups
 
-def fit_custom_peak_fct(name, intensity, time, plot=True, print_=True):
+def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
     """
     Fit the custom fct, defined as a skewed gaussian.
     :return:
