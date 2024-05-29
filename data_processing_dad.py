@@ -99,11 +99,9 @@ class DAD_Spectra:
         :return:
         """
         self.raw_data = self.data.copy()
-        self.plot_dad()
         self.background_subtraction(background_signal, settings)
         self.smoothing_function()
         self.normalize()
-        self.plot_dad()
         self.info["Processed"] = True
         return
 

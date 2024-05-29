@@ -16,6 +16,7 @@ from sklearn.metrics import silhouette_score
 
 
 def superimposed_peak_deconvolution(time, data_sum, masses, peak_left, peak_right, plot_ = False):
+    print("NMF triggered")
     threshold = .5
     # tensor = tl.tensor(intensity)
     range_comp = range(2, (len(masses)+1))
@@ -83,15 +84,19 @@ def superimposed_peak_deconvolution(time, data_sum, masses, peak_left, peak_righ
 
     # For now use min rec error as best n_comp (Check best metric with real superimp data).
     # Could also use Silhouette score or else.
-    min_rec_error = min(rec_errors)
+    """min_rec_error = min(rec_errors)
     min_rec_error_index = rec_errors.index(min_rec_error)
-    h_df = H_matrixes[min_rec_error_index]
+    h_df = H_matrixes[min_rec_error_index]"""
+    # Switch to Silhouette Score:
+    max_sil_score = max(sil_scores)
+    max_sil_score_index = sil_scores.index(max_sil_score)
+    h_df = H_matrixes[max_sil_score_index]
 
     mass_groups = group_mass_values(h_df, threshold)
     nnmf_peaks = fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right)
     return nnmf_peaks
 
-def fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right, plot_=False):
+def fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right, plot_=True):
     total_peak_intensity = np.zeros(shape=len(data_sum.columns))
     nnmf_peaks = []
     for masses in mass_groups:
@@ -107,6 +112,7 @@ def fit_grouped_masses(time, mass_groups, data_sum, peak_left, peak_right, plot_
         if successful_fit:
             peak = NNMFPeak(fit_parameters, peak_borders, r_squared, peak_integral, height, masses)
             nnmf_peaks.append(peak)
+        total_peak_intensity[:] = 0
     return nnmf_peaks
 
 
@@ -148,7 +154,7 @@ def group_mass_values(H_df, threshold):
     mass_groups = [set(group) for group in mass_groups]  # To convert back to list
     return mass_groups
 
-def fit_custom_peak_fct(name, intensity, time, plot=False, print_=True):
+def fit_custom_peak_fct(name, intensity, time, plot=True, print_=True):
     """
     Fit the custom fct, defined as a skewed gaussian.
     :return:

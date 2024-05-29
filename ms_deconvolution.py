@@ -196,7 +196,7 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
     for i in data_sum.index:  # [305:325] for actual peak
         intensity = np.array(data_sum.loc[i])
         total_intensity = np.sum(intensity)
-        if total_intensity > 10000000:
+        if total_intensity > 10000000:  # Modify depending on positive or negative mode
             list_background_masses.append(i)
     return list_background_masses
 
@@ -400,7 +400,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                 print("Peak: " + str(name) + " did not converge.")
                 successful_fit = False
 
-            if plot and successful_fit:
+            if plot: #and successful_fit:
                 plt.plot(time_index, total_peak_intensity)
                 plt.show()
 
@@ -409,7 +409,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                 mean = time_index[round(fit_parameters[1] + peak_left)]  # testing here
                 stwd = fit_parameters[2]
                 skewness = fit_parameters[3]
-                peak_left_fit = time_index[round(peak_borders[0] + peak_left)]  # Replace peak borders by gaussian hitting baseline?
+                peak_left_fit = time_index[round(peak_borders[0] + peak_left)]
                 peak_right_fit = time_index[round(peak_borders[1] + peak_left)]
 
                 new_ms_peak = ms_peak(height, mean, stwd, skewness, masses, r_squared,

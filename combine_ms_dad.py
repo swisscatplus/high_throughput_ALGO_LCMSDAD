@@ -22,8 +22,7 @@ def assign_peaks(full_analysis, method_name, settings):
     times_ms = np.array([peak.max for peak in ms_peaks])
     times_dad = np.array([peak.max for peak in dad_peaks])
     offset = estimate_offset(times_ms, times_dad)
-    # offset = 58  # TEMPORARY HARDSET BCS INSTRUMENTAL ERROR MAKES DETERMINATION IMPOSSIBLE
-    print(offset)
+    print(f"Offset: {offset}")
     ms_peaks = correct_times_offset(ms_peaks, offset)
     times_ms = times_ms - offset
 
@@ -139,28 +138,54 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
         close_indices_dad = find_close_indices(indices_known=close_indices_ms, times_indices_known=times_ms,
                                                times_to_check=times_dad, tolerance=tolerance)
 
+        # First, iterate over present dad and ms indices and add new indices until no more are being added
+        # This is to completely capture "chained" peaks
+        new_ms_values = True
+        new_dad_values = True
+        iteration_counter = 0
+        while new_ms_values or new_dad_values:
+            new_close_indices_ms = find_close_indices(close_indices_dad, times_dad, times_ms, tolerance)
+            if Counter(new_close_indices_ms) == Counter(close_indices_ms):
+                new_ms_values = False
+            else:
+                close_indices_ms = new_close_indices_ms
+            new_close_indices_dad = find_close_indices(close_indices_ms, times_ms, times_dad, tolerance)
+            if Counter(new_close_indices_dad) == Counter(close_indices_dad):
+                new_dad_values = False
+            else:
+                close_indices_dad = new_close_indices_dad
+            iteration_counter += 1
+            if iteration_counter > 1000:  # More than 1000 chained peaks is unrealistic
+                break  # Just in case sth weird happens this acts as an emergency break
+
         if len(close_indices_ms) == 1 and len(close_indices_dad) == 1:  # Only 1 DAD and MS peak in tolerance window
             matches.append((i ,close_indices_ms[0]))
-            # print("1 and 1")
+            print("1 and 1")
+            print((i ,close_indices_ms[0]))
+            print("------------")
         elif len(close_indices_ms) > 1 and len(close_indices_dad) == 1:  # Several MS peaks for 1 DAD peak
             relevant_integrals = []
             for index in close_indices_ms:
                 relevant_integrals.append(integrals_ms[index])
             largest_integral_index = relevant_integrals.index((max(relevant_integrals)))  # Largest ingtegral should be correct MS peak
             matches.append((i, close_indices_ms[largest_integral_index]))
-            # print(" 1 DAD and more MS")
+            print(" 1 DAD and more MS")
+            print((i, close_indices_ms[largest_integral_index]))
+            print("------------")
         elif len(close_indices_ms) == 1 and len(close_indices_dad) > 1:  # Several DAD peaks for 1 MS peak
             relevant_integrals = []
             for index in close_indices_dad:
                 relevant_integrals.append(integrals_dad[index])
             largest_integral_index = relevant_integrals.index((max(relevant_integrals)))  #  Largest integral as correct DAD peak if only one present
             matches.append((close_indices_dad[largest_integral_index], close_indices_ms[0]))
-            # print("1 MS and more DAD")
+            print("1 MS and more DAD")
+            print((close_indices_dad[largest_integral_index], close_indices_ms[0]))
+            print("----------")
         elif len(close_indices_ms) > 1 and len(close_indices_dad) > 1:  # Several DAD and MS peaks close by
 
             # First, iterate over present dad and ms indices and add new indices until no more are being added
             # This is to completely capture "chained" peaks
-            new_ms_values = True
+            """new_ms_values = True
             new_dad_values = True
             iteration_counter = 0
             while new_ms_values or new_dad_values:
@@ -176,7 +201,7 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
                     close_indices_dad = new_close_indices_dad
                 iteration_counter += 1
                 if iteration_counter > 1000:  # More than 1000 chained peaks is unrealistic
-                    break  # Just in case sth weird happens this acts as an emergency break
+                    break  # Just in case sth weird happens this acts as an emergency break"""
 
             # Now, we calculate the corresponding integral values and order time- and integral- values
             relevant_integrals_ms = []
@@ -206,7 +231,7 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
 
                 # Find index of closest relative integral in DAD for the MS index found before
                 rel_integral_ms = rela_integrals_ms[closest_index_ms]
-                closest_index_dad = min(enumerate(rela_integrals_dad), key = lambda  x: abs(x[1]-rel_integral_ms))[0]
+                closest_index_dad = min(enumerate(rela_integrals_dad), key = lambda x: abs(x[1]-rel_integral_ms))[0]
 
                 # min_index_ms ensures that peak order stays correct.
                 if index == closest_index_dad and closest_index_ms > min_index_ms:
@@ -215,6 +240,9 @@ def match_times(times_ms, times_dad, integrals_ms, integrals_dad):
                     true_index_ms = np.where(times_ms == times_ordered_ms[closest_index_ms])[0]
                     matches.append((true_index_dad[0], true_index_ms[0]))
                     min_index_ms = closest_index_ms
+                    print("Complex thingy")
+                    print((true_index_dad[0], true_index_ms[0]))
+                    print("----------")
 
         else:
             print("Warning: Scenario with neither MS nor DAD Peak shouldn't occur.")
