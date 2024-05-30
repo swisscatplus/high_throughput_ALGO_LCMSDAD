@@ -107,8 +107,8 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
 
     if plot:
         plt.figure()
-        plt.pcolormesh(reduced_heatmap, cmap="Blues")
-        plt.xlabel('Time')
+        plt.pcolormesh(reduced_heatmap, cmap="BuPu")
+        plt.xlabel('Time [s]')
         plt.ylabel('m/z')
         plt.colorbar()
         plt.show()
@@ -120,7 +120,7 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         #plt.plot(full_analysis.ms_data3d["time"], ms_intensity)
         plt.plot(filtered_time, new_ms_intensity)
         plt.xlabel("Time [s]")
-        plt.ylabel("Total Count")
+        plt.ylabel("Total Ion Count")
         plt.show()
 
         plt.plot(full_analysis.ms_data3d["time"], entropy)
@@ -485,6 +485,13 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
 
             plt.plot(time_index, intensity)
             plt.title("m/z value: " + str(i))
+            plt.xlabel("Time [s]")
+            plt.ylabel("Counts")
+            plt.show()
+            plt.plot(time_index, smoothed_intensity)
+            plt.title("m/z value: " + str(i))
+            plt.xlabel("Time [s]")
+            plt.ylabel("Counts")
             plt.show()
     return peak_dict
 
