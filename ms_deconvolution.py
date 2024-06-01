@@ -22,7 +22,7 @@ import ms_superimposed_peaks as ms_spr
 Functions to pick peaks in MS chromatogram and consequently perform deconvolution
 """
 
-def ms_create_peaks(full_analysis, ms_chr, settings, plot=True):
+def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
 
     background_masses_list = load_background_masses_list(full_analysis.info["LC Method"], settings)
     print(background_masses_list)
@@ -276,7 +276,7 @@ def ms_summation(data, entropy_peaks, background_masses_list, settings):
     ms_peak_list = process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, max_peak_width)
     return ms_peak_list
 
-def determine_peak_clusters(peak_dict, max_peak_width, print_=True):
+def determine_peak_clusters(peak_dict, max_peak_width, print_=False):
     """
     Fct to take in the list of peaks and return the clustered m/z belonging together. And the times corresponding
     to the groups.
