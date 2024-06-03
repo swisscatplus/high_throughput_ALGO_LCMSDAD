@@ -188,8 +188,12 @@ class ParafacData():
         if left < 0:
             parafac_peak_data = parafac_peak_data[:, -left:]
             left = 0
-
-        self.data[:, left:right] = parafac_peak_data + y_offset
+        
+        if len(self.data[0, left:right]) == len(parafac_peak_data[0]):
+            self.data[:, left:right] = parafac_peak_data + y_offset
+        else:
+            right_border = len(self.data[0, left:])
+            self.data[:, left:right] = parafac_peak_data[:, :right_border] + y_offset
         self.data[self.data < 0] = 0
 
     def __eq__(self, other):
