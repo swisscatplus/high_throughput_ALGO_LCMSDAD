@@ -101,9 +101,7 @@ def peak_molecule_name(peak_path):
 
     if not peak_file.dtb_hits == "":
         molecule_name = peak_file.dtb_hits
-    elif not peak_file.groups["dtb hits different method"].dtb_hits == "":
-        molecule_name = "Unknown Molecule " \
-                        + "Hits different method: " + peak_file.groups["dtb hits different method"].dtb_hits
+    # implement equal rt later
     elif not (peak_file.groups["dtb hits only MS"].dtb_hits == "" and
               peak_file.groups["dtb hits only DAD"].dtb_hits == ""):
         molecule_name = "Unknown Molecule " \

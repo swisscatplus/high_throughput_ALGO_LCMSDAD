@@ -188,7 +188,7 @@ class ParafacData():
         if left < 0:
             parafac_peak_data = parafac_peak_data[:, -left:]
             left = 0
-        
+
         if len(self.data[0, left:right]) == len(parafac_peak_data[0]):
             self.data[:, left:right] = parafac_peak_data + y_offset
         else:

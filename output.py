@@ -43,6 +43,15 @@ def dtb_molecule_full_data(file_name, settings, processed = True):
     out_vis.plot_dad_spectrum(dad_spectrum)
     return
 
+def plot_peak_data(file_path, processed = True):
+    ms_spectrum, dad_spectrum = out_files.peak_spectra(file_path, processed)
+    retention_time = out_files.peak_retention_time(file_path)
+
+    print(f"Retention time: {retention_time}")
+    ms_spectrum.plot_spectra()
+    dad_spectrum.plot_dad()
+    return
+
 def create_analysis_report(settings, run_folder, peak_folder = None, report_name = None):
     """
     Create output HTML file including visual output.

@@ -22,7 +22,7 @@ import ms_superimposed_peaks as ms_spr
 Functions to pick peaks in MS chromatogram and consequently perform deconvolution
 """
 
-def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
+def ms_create_peaks(full_analysis, ms_chr, settings, plot=True):
 
     background_masses_list = load_background_masses_list(full_analysis.info["LC Method"], settings)
     print(background_masses_list)
@@ -34,7 +34,8 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         columns_names = [str(i) for i in range(0, 5)]
         df_top_masses = pd.DataFrame(index = full_analysis.ms_data3d["time"], columns=columns_names)
         ms_single_values = pd.DataFrame(index = range(len(full_analysis.ms_data3d["time"])))
-        for i in np.arange(306.5, 308.0, 0.1):
+        for i in np.arange(132.2, 132.4, 0.1):
+            i = round(i, 1)
             ms_single_values[i] = ms_value
     df_heatmap = pd.DataFrame(index = np.arange(0.1, 1000.0, 0.1), columns = full_analysis.ms_data3d["time"])
     # prefilling the df with zeros is much slower when replacing them with intensity values -> fillna at the end
@@ -51,7 +52,8 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         sorted_index = np.argsort(-ms_spectrum.data["Intensity"])[:5]
 
         if plot:
-            for value in np.arange(306.5, 308.0, 0.1):
+            for value in np.arange(132.2, 132.4, 0.1):
+                value = round(value, 1)
                 for mass in ms_spectrum.data["m/z"]:
                     if mass == value:
                         value_index = ms_spectrum.data.index[ms_spectrum.data["m/z"] == value]
@@ -113,8 +115,10 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         plt.colorbar()
         plt.show()
 
-        for i in np.arange(306.5, 308.0, 0.1):
-            plt.plot(full_analysis.ms_data3d["time"], ms_single_values[i])
+        for i in np.arange(132.2, 132.4, 0.1):
+            i = round(i, 1)
+            plt.plot(full_analysis.ms_data3d["time"][::2], ms_single_values[i][::2], label=i)
+        plt.legend()
         plt.show()
 
         #plt.plot(full_analysis.ms_data3d["time"], ms_intensity)
@@ -123,8 +127,11 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         plt.ylabel("Total Ion Count")
         plt.show()
 
-        plt.plot(full_analysis.ms_data3d["time"], entropy)
+        #plt.plot(full_analysis.ms_data3d["time"], entropy)
         plt.plot(filtered_time, new_entropy)
+        plt.xlabel("Time [s]")
+        plt.ylabel("Entropy")
+        plt.title("Spectral Entropy")
         plt.show()
 
     ms_peak_list = ms_summation(reduced_heatmap, entropy_peaks, background_masses_list, settings)
