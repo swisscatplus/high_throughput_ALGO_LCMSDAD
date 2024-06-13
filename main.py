@@ -92,7 +92,7 @@ To create new background file, enter path here, change the name and uncomment th
 """
 background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
                                    "240405_Acetic_acid_HILIC-04.JSON")
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
+# data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
 
 
@@ -156,7 +156,7 @@ run_name = "240405_Acetic_acid_HILIC-05.JSON"
 # runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "coffeine"
-runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
+# runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 """
 Testing superimposed ms peak deco
@@ -170,30 +170,22 @@ json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_na
 
 
 # out.dtb_molecule_list(settings)
-# out.dtb_molecule_full_data("VAOCPAMSLUNLGC-UHFFFAOYSA-N.cdf", settings)
-out.create_analysis_report(settings, run_folder_name, report_name="group1", peak_folder="2024-06-03_10-37-42benzaldehyde2")  # peak_folder="2024-04-22_15-43-35"
+# out.dtb_molecule_full_data("AQBOUNVXZQRXNP-UHFFFAOYSA-L.cdf", settings)
+# out.create_analysis_report(settings, run_folder_name, report_name="group1", peak_folder="2024-06-03_10-37-42benzaldehyde2")  # peak_folder="2024-04-22_15-43-35"
 # 2024-05-22_10-00-49
 # opt_sc.comparison_dtb_named_files(settings)
 # opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
 # opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
 
 
-"""peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-02_15-27-32tetraamine-palladiumchloride",
-                              "peak_3.cdf")
+peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-02_15-27-32bis-diphenylphosphino-ethane",
+                              "peak_1.cdf")
 out.plot_peak_data(peak_file_path, True)
 
 molecule_name = "Tetraamminepalladium(II) chloride"
-create_file.create_dtb_entry(directory_project, peak_file_path, molecule_name)"""
+# create_file.create_dtb_entry(directory_project, peak_file_path, molecule_name)
 
-"""if full_analysis.info["plus_minus_acq"]:
-    ms_chr = data_processing.MS_full_chr(full_analysis.ms_data3d_polarized, full_analysis.info)
-else:
-    ms_chr = data_processing.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
 
-ms_peaks = msd.ms_create_peaks(full_analysis, ms_chr, settings)
-for peak in ms_peaks:
-    print(peak)
-"""
 
 
 """

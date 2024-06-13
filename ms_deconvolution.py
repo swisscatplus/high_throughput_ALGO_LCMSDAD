@@ -22,7 +22,7 @@ import ms_superimposed_peaks as ms_spr
 Functions to pick peaks in MS chromatogram and consequently perform deconvolution
 """
 
-def ms_create_peaks(full_analysis, ms_chr, settings, plot=True):
+def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
 
     background_masses_list = load_background_masses_list(full_analysis.info["LC Method"], settings)
     print(background_masses_list)
