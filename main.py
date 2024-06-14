@@ -170,19 +170,22 @@ json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_na
 
 
 # out.dtb_molecule_list(settings)
-# out.dtb_molecule_full_data("AQBOUNVXZQRXNP-UHFFFAOYSA-L.cdf", settings)
+# out.dtb_molecule_full_data("RCIJACVHOIKRAP-UHFFFAOYSA-M.cdf", settings)
 # out.create_analysis_report(settings, run_folder_name, report_name="group1", peak_folder="2024-06-03_10-37-42benzaldehyde2")  # peak_folder="2024-04-22_15-43-35"
 # 2024-05-22_10-00-49
-# opt_sc.comparison_dtb_named_files(settings)
+opt_sc.comparison_dtb_named_files(settings, True)
+print("Done with processed")
+opt_sc.comparison_dtb_named_files(settings, False)
+
 # opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
 # opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
 
 
-"""peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-03_10-37-42benzo-h-quionoline",
-                              "peak_3.cdf")
+"""peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-14_16-37-50chrysin",
+                              "peak_4.cdf")
 out.plot_peak_data(peak_file_path, True)
 
-molecule_name = "Benzo[h]quinoline"
+molecule_name = "Benzaldehyde"
 #create_file.create_dtb_entry(directory_project, peak_file_path, molecule_name)"""
 
 
@@ -193,94 +196,16 @@ Analyse molecules for dtb:
 """
 
 
-timestamp_peakfolder = settings["peak_folder_time"]
-"""
----------------------------------------------------------------------------------------
-"""
+"""timestamp_peakfolder = settings["peak_folder_time"]"""
 
-molecule_folder = "tetraclorohydroquinone"
-background_file = "240418-screening_C18_acid_acetic-C-02.JSON"
 
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "phloroglucinol"
-background_file = "240418-screening_C18_acid_acetic-C-02.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
 
 """
 ---------------------------------------------------------------------------------------
-"""
 
-molecule_folder = "bispentafluorophenylcarbonate"
-background_file = "240419-screening_C18_acid_acetic-C-09.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "tetrachloro-nitrobenzene"
-background_file = "240419-screening_C18_acid_acetic-C-09.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "bicyclohexane-diol"
-background_file = "240419-screening_C18_acid_acetic-C-16.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-
-"""
----------------------------------------------------------------------------------------
-"""
 
 molecule_folder = "cloro-nitropyridine"
-background_file = "240418-screening_C18_acid_acetic-C-37.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "dioctyl-sulfo-succinate"
-background_file = "240418-screening_C18_acid_acetic-C-44.JSON"
+background_file = "240419-screening_C18_acid_acetic-C-37.JSON"
 
 print(molecule_folder)
 settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
@@ -289,155 +214,9 @@ background_filepath = os.path.join(directory_project, "Data_examples", "testfile
 data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
 
-"""
 ---------------------------------------------------------------------------------------
 """
 
-molecule_folder = "dlbenzyl"
-background_file = "240418-screening_C18_acid_acetic-C-51.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "piperidine-dione"
-background_file = "240418-screening_C18_acid_acetic-C-65.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "methyl-benzenoicacid"
-background_file = "240417-screening_C18_a.acetic-01.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "n-phenylbisdifluoromethanesulfonimide"
-background_file = "240417-screening_C18_a.acetic-08.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "eugenol"
-background_file = "240417-screening_C18_a.acetic-15.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "dimethoxyethane"
-background_file = "240417-screening_C18_a.acetic-22.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "dihydroxybiphenyl"
-background_file = "240417-screening_C18_a.acetic-29.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "aminodihydropyrimidine"
-background_file = "240412_screening_HILIC_acetic_acid-02.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "aniline-sulfonicacid"
-background_file = "240412_screening_HILIC_acetic_acid-16.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "benzaldehyde"
-background_file = "240412_screening_HILIC_acetic_acid-21.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-"""
----------------------------------------------------------------------------------------
-"""
-
-molecule_folder = "chrysin"
-background_file = "240412-screening_C18_acetic_acide_b-10.JSON"
-
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-
-"""
----------------------------------------------------------------------------------------
-"""
 
 
 

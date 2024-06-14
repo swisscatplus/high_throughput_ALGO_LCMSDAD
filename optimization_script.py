@@ -256,7 +256,7 @@ def comparison_dtb_named_files(settings, processed = True):
     upper_limit_ft_range = range(25, 500, 25)
 
     for folder in analyte_folders:
-        csv_filename = "ms_optimization_" + folder + ".csv"
+        csv_filename = "ms_optimization_" + folder + str(processed) + ".csv"
         csv_filepath = os.path.join(settings["directory_project"], "Data_examples", csv_filename)
         with open(csv_filepath, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=file_headings)
@@ -278,7 +278,7 @@ def comparison_dtb_named_files(settings, processed = True):
                     })
     print("Done with MS")
     for folder in analyte_folders:
-        csv_filename = "dad_optimization_" + folder + ".csv"
+        csv_filename = "dad_optimization_" + folder + str(processed) + ".csv"
         csv_filepath = os.path.join(settings["directory_project"], "Data_examples", csv_filename)
         with open(csv_filepath, "w", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=file_headings)
