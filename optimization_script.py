@@ -19,7 +19,13 @@ def plot_optimization_dad(csv_file_name, settings):
         if not column == "Comparison_type":
             data[column] = data[column].apply(json.loads)
 
-    plot_extract_histogram(data, "total", "avg_diff")
+
+    plot_extract_histogram(data, "total", "Similarity_true")
+    plot_extract_histogram(data, "pearson", "Similarity_true")
+    plot_extract_histogram(data, "dot_product", "Similarity_true")
+    plot_extract_histogram(data, "derivative_n_4", "Similarity_true")
+    plot_extract_histogram(data, "derivative_n_2", "Similarity_true")
+    plot_extract_histogram(data, "ft_low_lim_5_up_lim_25", "Similarity_true")
 
     # Plot heatmap average difference
     df_ft_avg = extract_ft_avg(data, "lowest_diff")
@@ -28,7 +34,7 @@ def plot_optimization_dad(csv_file_name, settings):
     plot_heatmap_all_alg(df_ft_min, "Fourier Transform Min Average Difference")
 
     df_others_min = extract_min_column_dad(data, "lowest_diff")
-    plot_heatmap_all_alg(df_others_min, "DAD Algorithms Average Difference")
+    plot_heatmap_all_alg(df_others_min, "DAD Algorithms Lowest Difference")
 
     df_others_avg = extract_avg_column_dad(data, "lowest_diff")
     plot_heatmap_all_alg(df_others_avg, "DAD Algorithms Average Difference")
@@ -44,7 +50,29 @@ def plot_optimization_ms(csv_file_name, settings):
         if not column == "Comparison_type":
             data[column] = data[column].apply(json.loads)
 
+            """("_None"):
+            df["None"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_exponential"):
+            df["Exponential"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_exponential2"):
+            df["Exponential 2"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_logarithmic"):
+            df["Logarithmic"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_sin"):
+            df["sin"].loc[indices[algorithm_index]] = np.min(values)
+        elif data["Comparison_type"][index].endswith("_sin2"):
+        file_headings = ["Comparison_type", "Similarity_true", "Similarity_false", "Diff_distribution",
+                        "lowest_diff", "avg_diff"]
+        
+        """
+
+    plot_extract_histogram(data, "total", "Similarity_true")
     plot_extract_histogram(data, "dot_product_sin2", "Similarity_false")
+    plot_extract_histogram(data, "dot_product_sin2", "Diff_distribution")
+    plot_extract_histogram(data, "dot_product_sin2", "lowest_diff")
+    plot_extract_histogram(data, "dot_product_sin2", "avg_diff")
+
+
 
     # Plot heatmap average difference
     df_avg_diff = extract_avg_column_ms(data, "avg_diff")
@@ -71,7 +99,17 @@ def plot_extract_histogram(data, algorithm_name, type_name):
         index += 1
     if len(histogram_data) == 0:
         raise ValueError("Wrong algorithm name or type name")
-    sns.histplot(histogram_data, kde=True)
+
+    """histogram_data2 = []
+    index = 0
+    for values in data["Similarity_true"]:
+        if data["Comparison_type"][index] == algorithm_name:
+            histogram_data2 = [value for value in values if type(value) == float]
+        index += 1"""
+
+    sns.histplot(histogram_data, kde=False, binwidth=0.01)
+    #sns.histplot(histogram_data2, kde=True, binwidth=0.01)
+
     plt.title(f"Histogram of {type_name} for {algorithm_name}")
     plt.xlabel("Score")
     plt.ylabel("Counts")
@@ -79,7 +117,7 @@ def plot_extract_histogram(data, algorithm_name, type_name):
     return
 
 def extract_min_column_dad(data, column_name):
-    indices = ["pearson", "dot_product", "ft_low_lim_0_up_lim_200", "derivative_n_1", "derivative_n_2", "derivative_n_3", "derivative_n_4"]
+    indices = ["pearson", "dot_product", "ft_low_lim_5_up_lim_25", "derivative_n_1", "derivative_n_2", "derivative_n_3", "derivative_n_4"]
     df = pd.DataFrame({
         "Algorithm": indices,
     })
@@ -99,7 +137,7 @@ def extract_min_column_dad(data, column_name):
     return df
 
 def extract_avg_column_dad(data, column_name):
-    indices = ["pearson", "dot_product", "ft_low_lim_0_up_lim_200", "derivative_n_1", "derivative_n_2", "derivative_n_3", "derivative_n_4"]
+    indices = ["pearson", "dot_product", "ft_low_lim_5_up_lim_25", "derivative_n_1", "derivative_n_2", "derivative_n_3", "derivative_n_4"]
     df = pd.DataFrame({
         "Algorithm": indices,
     })

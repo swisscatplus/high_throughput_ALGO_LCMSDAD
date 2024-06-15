@@ -43,28 +43,28 @@ Define default settings
 ---------------------------------------------------------
 """
 settings = {
-    "threshold_ms_spectra": .001,  # threshold MS spectra noise removal
-    "ms_weighting_fct": "None",  # Weighting fct MS Data
+    "threshold_ms_spectra": .2,  # threshold MS spectra noise removal
+    "ms_weighting_fct": "sin2",  # Weighting fct MS Data
     "threshold_ms_entropy_sim": 10.,
-    "threshold_ms_dot_product_sim": .000000000000000001,
+    "threshold_ms_dot_product_sim": .2,
     "threshold_ms_weighted_dp_sim": 1.,
     "threshold_ms_bhat1": 1.,
     "background folder": background_folder,
     "ms_algorithm": "dot_product",  # Options: all, dot_product, weighted_dot_product, bhat1, entropy_sim
-    "dad_algorithm": "dot_product",  # Options: all,
+    "dad_algorithm": "derivative",  # Options: all,
     "threshold_dad_pearson": 1.,
     "threshold_dad_dot_product": .000000000000000001,
     "threshold_dad_ft": 1.,
-    "threshold_dad_derivative": 1.,
+    "threshold_dad_derivative": .1,
     "FT_low_border": 0,  # Settings for cutting the FT spectrum before dot product; removes background; 0 is lowest
     "FT_upper_border": 53,  # To remove noise; 105 is highest (max wvl number)
-    "nth_derivative": 1,  # Number of derivatives for comparison DAD.
+    "nth_derivative": 4,  # Number of derivatives for comparison DAD.
     "retention_time_interval": 5.,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "negative",  # positive or negative
+    "ion_detection_mode": "positive",  # positive or negative
     "method_name": "AceticAcid01",
-    "Number Columns": 5,  # Number for columns for heatmap visualization
+    "Number Columns": 8,  # Number for columns for heatmap visualization
 }
 print("Weighting function used for MS Spectra: " + settings["ms_weighting_fct"])
 method_name = "AceticAcid01"  # Change into settings later!
@@ -91,8 +91,8 @@ To create new background file, enter path here, change the name and uncomment th
 ---------------------------------------------------------
 """
 background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   "240405_Acetic_acid_HILIC-04.JSON")
-# data_processing.create_new_background_spectra(background_filepath, background_method, settings)
+                                   "240611_synthese_Leander_2024-06-11_16-38-22+02-00-01.JSON")
+data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
 
 
@@ -155,8 +155,8 @@ dad_path = os.path.join(directory_project, "Data_examples", "test.txt")
 run_name = "240405_Acetic_acid_HILIC-05.JSON"
 # runs.analyse_single_run(run_name, method_name, background_method, settings)
 
-run_folder_name = "coffeine"
-# runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
+run_folder_name = "screening_suzuki"
+runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
 
 """
 Testing superimposed ms peak deco
@@ -171,14 +171,15 @@ json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_na
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("RCIJACVHOIKRAP-UHFFFAOYSA-M.cdf", settings)
-# out.create_analysis_report(settings, run_folder_name, report_name="group1", peak_folder="2024-06-03_10-37-42benzaldehyde2")  # peak_folder="2024-04-22_15-43-35"
+out.create_analysis_report(settings, run_folder_name, report_name="screening_suzuki_positive")  # peak_folder="2024-04-22_15-43-35"
 # 2024-05-22_10-00-49
-opt_sc.comparison_dtb_named_files(settings, True)
+"""opt_sc.comparison_dtb_named_files(settings, True)
 print("Done with processed")
-opt_sc.comparison_dtb_named_files(settings, False)
+print(time.time())
+opt_sc.comparison_dtb_named_files(settings, False)"""
 
-# opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_comp.csv", settings)
-# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_comp.csv", settings)
+# opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_compTrue.csv", settings)
+# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_compTrue.csv", settings)
 
 
 """peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-14_16-37-50chrysin",

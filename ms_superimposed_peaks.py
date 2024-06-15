@@ -136,7 +136,10 @@ def calculate_erros(W, H, intensities):
     reconstruction = np.dot(W, H)
     reconstruction_error = np.linalg.norm(intensities - reconstruction)
 
-    silhouette_error_score = silhouette_score(W, np.argmax(W, axis=1))
+    try:
+        silhouette_error_score = silhouette_score(W, np.argmax(W, axis=1))
+    except ValueError:
+        silhouette_error_score = -1
     return reconstruction_error, silhouette_error_score
 
 def group_mass_values(H_df, threshold):
