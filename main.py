@@ -62,7 +62,7 @@ settings = {
     "retention_time_interval": 5.,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "positive",  # positive or negative
+    "ion_detection_mode": "negative",  # positive or negative
     "method_name": "AceticAcid01",
     "Number Columns": 8,  # Number for columns for heatmap visualization
 }
@@ -152,7 +152,7 @@ dad_path = os.path.join(directory_project, "Data_examples", "test.txt")
 # dadms.assign_peaks(full_analysis, settings)
 # dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
 
-run_name = "240405_Acetic_acid_HILIC-05.JSON"
+run_name = "240611_synthese_Leander_2024-06-11_17-12-13+02-00-03.JSON"
 # runs.analyse_single_run(run_name, method_name, background_method, settings)
 
 run_folder_name = "screening_suzuki"
@@ -167,11 +167,12 @@ json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_na
 # full_analysis = init.import_run_json(json_path, method=background_method)
 # ms_chr = data_processing.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
 # ms_peaks = msd.ms_create_peaks(full_analysis, ms_chr, settings)
-
+# ms_spectra = ms_chr.extract_single_ms(330)
+# ms_spectra.plot_spectra()
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("RCIJACVHOIKRAP-UHFFFAOYSA-M.cdf", settings)
-out.create_analysis_report(settings, run_folder_name, report_name="screening_suzuki_positive")  # peak_folder="2024-04-22_15-43-35"
+out.create_analysis_report(settings, run_folder_name, report_name="screening_suzuki_negative2")  # peak_folder="2024-04-22_15-43-35"
 # 2024-05-22_10-00-49
 """opt_sc.comparison_dtb_named_files(settings, True)
 print("Done with processed")

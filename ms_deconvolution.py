@@ -34,7 +34,7 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         columns_names = [str(i) for i in range(0, 5)]
         df_top_masses = pd.DataFrame(index = full_analysis.ms_data3d["time"], columns=columns_names)
         ms_single_values = pd.DataFrame(index = range(len(full_analysis.ms_data3d["time"])))
-        for i in np.arange(132.2, 132.4, 0.1):
+        for i in np.arange(225, 226, 0.1):
             i = round(i, 1)
             ms_single_values[i] = ms_value
     df_heatmap = pd.DataFrame(index = np.arange(0.1, 1000.0, 0.1), columns = full_analysis.ms_data3d["time"])
@@ -52,14 +52,14 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         sorted_index = np.argsort(-ms_spectrum.data["Intensity"])[:5]
 
         if plot:
-            for value in np.arange(132.2, 132.4, 0.1):
+            for value in np.arange(225, 226, 0.1):
                 value = round(value, 1)
                 for mass in ms_spectrum.data["m/z"]:
                     if mass == value:
                         value_index = ms_spectrum.data.index[ms_spectrum.data["m/z"] == value]
                         ms_single_values[value][index] = ms_spectrum.data["Intensity"][value_index]
         for mass, intensity in zip(ms_spectrum.data["m/z"], ms_spectrum.data["Intensity"]):
-            if mass in df_heatmap.index and intensity > 10000:  # 10k
+            if mass in df_heatmap.index and intensity > 2000:  # 10k Probably too high
                 df_heatmap.at[mass, i] = intensity  # Tried set to 1 for clustering, didn't work well...
         index += 1
     df_heatmap.fillna(0, inplace=True)
@@ -115,7 +115,7 @@ def ms_create_peaks(full_analysis, ms_chr, settings, plot=False):
         plt.colorbar()
         plt.show()
 
-        for i in np.arange(132.2, 132.4, 0.1):
+        for i in np.arange(225, 226, 0.1):
             i = round(i, 1)
             plt.plot(full_analysis.ms_data3d["time"][::2], ms_single_values[i][::2], label=i)
         plt.legend()
@@ -151,7 +151,7 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
         ms_intensity[index] = sum(ms_spectrum.data["Intensity"])
 
         for mass, intensity in zip(ms_spectrum.data["m/z"], ms_spectrum.data["Intensity"]):
-            if mass in df_heatmap.index and intensity > 10000:
+            if mass in df_heatmap.index and intensity > 2000:
                 df_heatmap.at[mass, i] = intensity
         index += 1
     df_heatmap.fillna(0, inplace=True)
@@ -200,9 +200,9 @@ def determine_background_masses_list(full_analysis, ms_chr, settings):
     data_sum.set_index(new_indices, inplace=True)
 
     if settings["ion_detection_mode"] == "negative":
-        background_threshold = 5000000
+        background_threshold = 2000000
     else:
-        background_threshold = 10000000
+        background_threshold = 5000000
 
     list_background_masses = []
     for i in data_sum.index:
@@ -218,7 +218,6 @@ def ms_entropy_peaks(filtered_entropy, plot = False):
     :return:
     """
     window = np.ones(10)/10
-
 
     # For local minima
     baseline = -als_baseline(-filtered_entropy)  # Negative sign bcs we want to emphatize minima
@@ -375,8 +374,7 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
     Compare summed peaks with entropy peaks. Fit those who exist in both with gaussian fct.
     :return:
     """
-    # print(inverse_peaklist)
-    # print(peak_clusters)
+
     entropy_confirmed_peaks = []
     ms_peak_list = []
     for name, times in peak_clusters.items():
@@ -421,8 +419,15 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                 mean = time_index[round(fit_parameters[1] + peak_left)]  # testing here
                 stwd = fit_parameters[2]
                 skewness = fit_parameters[3]
-                peak_left_fit = time_index[round(peak_borders[0] + peak_left)]
-                peak_right_fit = time_index[round(peak_borders[1] + peak_left)]
+
+                if round(peak_borders[0] + peak_left) > 0:
+                    peak_left_fit = time_index[round(peak_borders[0] + peak_left)]
+                else:
+                    peak_left_fit = time_index[0]
+                if round(peak_borders[1] + peak_left) < time_index.size:
+                    peak_right_fit = time_index[round(peak_borders[1] + peak_left)]
+                else:
+                    peak_right_fit = time_index[-1]
 
                 new_ms_peak = ms_peak(height, mean, stwd, skewness, masses, r_squared,
                                       peak_left_fit, peak_right_fit, peak_integral)
@@ -461,13 +466,14 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
         peaks = find_peaks_cwt(smoothed_intensity, 10)  # try increasing width?
             # Maybe exchange this for individual background subtraction and checking if peaks exceeds threshold
         if settings["ion_detection_mode"] == "negative":
-            peak_threshold = 10000  # 15 000 before
+            peak_threshold = 3000  # 15 000 before
         else:
             peak_threshold = 30000
         filtered_peaks = [peak for peak in peaks if smoothed_intensity[peak] > peak_threshold]  # Maybe change threshold?
         # Changed to smoothed_intensity, so that peaks directly between the window frames, are not ignored due to random 0 at peak.
         # -> readjust thresholds? Could be necessary to lower them. TEST! -> Yes, it is necessary
         index_test = 0
+
         if print_:
             for x in intensity:
                 print("--------")
@@ -489,7 +495,8 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
         peak_dict[i] = filtered_peaks
         if plot:
             time_index = np.round(np.array(data_sum.columns), 3)
-
+            for t in peaks:
+                print(time_index[t])
             plt.plot(time_index, intensity)
             plt.title("m/z value: " + str(i))
             plt.xlabel("Time [s]")

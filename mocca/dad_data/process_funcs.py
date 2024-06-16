@@ -137,8 +137,7 @@ def pick_peaks(compound_data, experiment, absorbance_threshold,
                         compound_data.time[peak.maximum] <= peaks_low_pass]
 
     # Peaks or such large intervals shouldn't naturally occur but are regarded as artefacts from dad peaks close by.
-    # (selected by sp peak_width) They cause delay in peak deconvolution and are, thus, removed.
-    print(merged_peaks)
+    # (selected by sp peak_width) They cause delay in peak deconvolution and are removed.
 
     merged_peaks = sorted(merged_peaks, key=lambda peak: peak.maximum)
     chromatogram = Chromatogram(experiment, compound_data)
