@@ -66,8 +66,8 @@ def plot_optimization_ms(csv_file_name, settings):
         
         """
 
-    plot_extract_histogram(data, "total", "Similarity_true")
-    plot_extract_histogram(data, "dot_product_sin2", "Similarity_false")
+    #plot_extract_histogram(data, "total", "Similarity_true")
+    #plot_extract_histogram(data, "dot_product_sin2", "Similarity_false")
     plot_extract_histogram(data, "dot_product_sin2", "Diff_distribution")
     plot_extract_histogram(data, "dot_product_sin2", "lowest_diff")
     plot_extract_histogram(data, "dot_product_sin2", "avg_diff")
@@ -421,22 +421,26 @@ def compare_analyte_dtb_ms(analyte_folder, settings, processed = True):
 
                     dtb_spectrum_ms.weighting_fct(settings)
 
-                    if settings["ms_algorithm"] == "dot_product":
-                        similarity_score = ms_comp.dot_product_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
-                    elif settings["ms_algorithm"] == "weighted_dot_product":
-                        similarity_score = ms_comp.weighted_dp_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
-                    elif settings["ms_algorithm"] == "bhat1":
-                        similarity_score = ms_comp.bhattacharya1_distance(analyte_spectrum_ms, dtb_spectrum_ms)
-                    elif settings["ms_algorithm"] == "entropy_sim":
-                        similarity_score = ms_comp.entropy_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
-                    elif settings["ms_algorithm"] == "all":
-                        sum_score = ms_comp.dot_product_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
-                        sum_score += ms_comp.weighted_dp_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
-                        sum_score += ms_comp.bhattacharya1_distance(analyte_spectrum_ms, dtb_spectrum_ms)
-                        sum_score += ms_comp.entropy_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
-                        similarity_score = sum_score/4
-                    else:
-                        raise SyntaxError("Error: Unknown comparison algorithm MS")
+                    try:
+                        if settings["ms_algorithm"] == "dot_product":
+                            similarity_score = ms_comp.dot_product_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
+                        elif settings["ms_algorithm"] == "weighted_dot_product":
+                            similarity_score = ms_comp.weighted_dp_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
+                        elif settings["ms_algorithm"] == "bhat1":
+                            similarity_score = ms_comp.bhattacharya1_distance(analyte_spectrum_ms, dtb_spectrum_ms)
+                        elif settings["ms_algorithm"] == "entropy_sim":
+                            similarity_score = ms_comp.entropy_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
+                        elif settings["ms_algorithm"] == "all":
+                            sum_score = ms_comp.dot_product_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
+                            sum_score += ms_comp.weighted_dp_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
+                            sum_score += ms_comp.bhattacharya1_distance(analyte_spectrum_ms, dtb_spectrum_ms)
+                            sum_score += ms_comp.entropy_similarity(analyte_spectrum_ms, dtb_spectrum_ms)
+                            similarity_score = sum_score/4
+                        else:
+                            raise SyntaxError("Error: Unknown comparison algorithm MS")
+                    except Exception as error_:
+                        similarity_score = 1
+                        print(f"An error in the comparison function: {error_}")
 
                     if database_entry == peak_name:
                         true_similarity_score.append(similarity_score)

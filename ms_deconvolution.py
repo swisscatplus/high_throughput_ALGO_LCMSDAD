@@ -438,9 +438,15 @@ def process_ms_peaks(peak_clusters, inverse_peaklist, data_sum, entropy_peaks, m
                     mean = time_index[round(nnmf_peak.fit_parameters[1] + peak_left)]  # testing here
                     stwd = nnmf_peak.fit_parameters[2]
                     skewness = nnmf_peak.fit_parameters[3]
-                    peak_left_fit = time_index[
-                        round(nnmf_peak.peak_borders[0] + peak_left)]  # Replace peak borders by gaussian hitting baseline?
-                    peak_right_fit = time_index[round(nnmf_peak.peak_borders[1] + peak_left)]
+                    if round(nnmf_peak.peak_borders[0] + peak_left) > 0:
+                        peak_left_fit = time_index[
+                            round(nnmf_peak.peak_borders[0] + peak_left)]  # Replace peak borders by gaussian hitting baseline?
+                    else:
+                        peak_left_fit = time_index[0]
+                    if round(nnmf_peak.peak_borders[1] + peak_left) < time_index.size:
+                        peak_right_fit = time_index[round(nnmf_peak.peak_borders[1] + peak_left)]
+                    else:
+                        peak_right_fit = time_index[-1]
                     new_ms_peak = ms_peak(nnmf_peak.height, mean, stwd, skewness, nnmf_peak.masses, nnmf_peak.r_squared, peak_left_fit,
                                           peak_right_fit, nnmf_peak.peak_integral, nnmf_decon=True)
                     ms_peak_list.append(new_ms_peak)

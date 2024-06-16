@@ -36,10 +36,17 @@ def signal_comparison(settings):
                     sec_signal = load_signal_file(second_signal_path)
                 except FileNotFoundError:  # Comes up bcs equal signal files are being deleted
                     continue
+
+                old_threshold_ms = settings["threshold_ms_dot_product_sim"]
+                old_threshold_dad = settings["threshold_dad_derivative"]
+                settings["threshold_ms_dot_product_sim"] = .8
+                settings["threshold_dad_derivative"] = .8
                 comparison_ms = ms_comp.comparison_ms(first_signal.ms_spectrum, sec_signal.ms_spectrum, settings)
                 comparison_dad = dad_comp.comparison_dad(first_signal.dad_spectrum, sec_signal.dad_spectrum, settings)
                 comparison_rf = dad_comp.compare_retention_time(first_signal.info["Retention Time"],
                                                                 sec_signal.info["Retention Time"], settings)
+                settings["threshold_ms_dot_product_sim"] = old_threshold_ms
+                settings["threshold_dad_derivative"] = old_threshold_dad
                 if comparison_ms and comparison_dad and comparison_rf:
                     chosen_signal = choose_better_signal(first_signal, sec_signal)
                     combined_run_nr = np.hstack((first_signal.all_runs["All runs"], sec_signal.all_runs["All runs"]))
