@@ -293,7 +293,7 @@ def comparison_dtb_named_files(settings, processed = True):
     lower_limit_ft_range = range(0, 30, 5)
     upper_limit_ft_range = range(25, 500, 25)
 
-    for folder in analyte_folders:
+    """for folder in analyte_folders:
         csv_filename = "ms_optimization_" + folder + str(processed) + ".csv"
         csv_filepath = os.path.join(settings["directory_project"], "Data_examples", csv_filename)
         with open(csv_filepath, "w", newline="") as csvfile:
@@ -313,7 +313,7 @@ def comparison_dtb_named_files(settings, processed = True):
                         file_headings[3]: json.dumps(scores[2]),
                         file_headings[4]: json.dumps(scores[3]),
                         file_headings[5]: json.dumps(scores[4])
-                    })
+                    })"""
     print("Done with MS")
     for folder in analyte_folders:
         csv_filename = "dad_optimization_" + folder + str(processed) + ".csv"

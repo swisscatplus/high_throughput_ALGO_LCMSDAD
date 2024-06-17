@@ -62,7 +62,7 @@ settings = {
     "retention_time_interval": 10.,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "positive",  # positive or negative
+    "ion_detection_mode": "negative",  # positive or negative
     "method_name": "AceticAcid01",
     "Number Columns": 8,  # Number for columns for heatmap visualization
 }
@@ -129,7 +129,7 @@ Deal with peaks to be compared or whatever. Make sure to enter folder time stamp
 """
 # Folder time stamp will later be automatised for a direct full comparison...
 
-peak_directory = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-03-14_15-30-45")
+peak_directory = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-16_14-15-23")
 
 # dtb.compare_all_peaks_dtb(peak_directory, settings)
 
@@ -172,23 +172,21 @@ json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_na
 
 # out.dtb_molecule_list(settings)
 # out.dtb_molecule_full_data("RCIJACVHOIKRAP-UHFFFAOYSA-M.cdf", settings)
-# out.create_analysis_report(settings, run_folder_name, report_name="screening_suzuki_positive2")  # peak_folder="2024-04-22_15-43-35"
+# out.create_analysis_report(settings, run_folder_name, report_name="screening_suzuki_negative")  # peak_folder="2024-04-22_15-43-35"
 # 2024-05-22_10-00-49
-"""opt_sc.comparison_dtb_named_files(settings, True)
-print("Done with processed")
-print(time.time())
-opt_sc.comparison_dtb_named_files(settings, False)"""
+
+opt_sc.comparison_dtb_named_files(settings, False)
 
 # opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_compTrue.csv", settings)
-opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_compFalse.csv", settings)
+# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_compFalse.csv", settings)
 
 
-"""peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-14_16-37-50chrysin",
-                              "peak_4.cdf")
+"""peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-16_14-15-23",
+                              "peak_3.cdf")
 out.plot_peak_data(peak_file_path, True)
 
-molecule_name = "Benzaldehyde"
-#create_file.create_dtb_entry(directory_project, peak_file_path, molecule_name)"""
+molecule_name = "Phenylboronic acid"
+create_file.create_dtb_entry(directory_project, peak_file_path, molecule_name)"""
 
 
 

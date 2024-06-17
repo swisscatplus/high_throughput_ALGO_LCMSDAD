@@ -474,7 +474,7 @@ def ms_peak_picking(data_sum, background_masses_list, settings, plot = False, pr
         if settings["ion_detection_mode"] == "negative":
             peak_threshold = 3000  # 15 000 before
         else:
-            peak_threshold = 30000
+            peak_threshold = 10000
         filtered_peaks = [peak for peak in peaks if smoothed_intensity[peak] > peak_threshold]  # Maybe change threshold?
         # Changed to smoothed_intensity, so that peaks directly between the window frames, are not ignored due to random 0 at peak.
         # -> readjust thresholds? Could be necessary to lower them. TEST! -> Yes, it is necessary
