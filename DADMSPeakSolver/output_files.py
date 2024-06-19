@@ -1,9 +1,9 @@
 import os
 from netCDF4 import Dataset
 import pandas as pd
-import data_processing as dpr
-import data_processing_dad as dpr_dad
-import initialize as init
+from . import data_processing as dpr
+from . import data_processing_dad as dpr_dad
+from . import initialize as init
 
 def dtb_molecule_name(dtb_path):
     dtb_file = Dataset(dtb_path, "r")

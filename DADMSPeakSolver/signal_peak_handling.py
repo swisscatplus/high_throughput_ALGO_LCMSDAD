@@ -4,12 +4,12 @@ import pandas as pd
 from netCDF4 import Dataset
 import numpy as np
 
-import create_file
-import data_processing
-import data_processing_dad as dpr_dad
-import initialize as init
-import ms_spectra_comparison as ms_comp
-import dad_spectra_comparison as dad_comp
+from . import create_file
+from . import data_processing
+from . import data_processing_dad as dpr_dad
+from . import initialize as init
+from . import ms_spectra_comparison as ms_comp
+from . import dad_spectra_comparison as dad_comp
 
 """
 Handling of the signal and peak files. Comparison with each other and rewriting of files.

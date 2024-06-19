@@ -8,9 +8,9 @@ Created on Mon Dec 20 17:20:35 2021
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-from mocca.peak.utils import get_peak_data
-from mocca.components.models import QuantComponent
-from mocca.components.utils import check_peaks_compound_id
+from ..peak.utils import get_peak_data
+from ..components.models import QuantComponent
+from ..components.utils import check_peaks_compound_id
 
 
 def get_integrate_wl_index(compound_id, quali_comp_db):

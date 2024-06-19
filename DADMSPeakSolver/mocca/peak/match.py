@@ -8,8 +8,8 @@ Created on Wed Dec  1 12:06:57 2021
 import numpy as np
 import logging
 
-from mocca.peak.models import PreprocessedPeak
-from mocca.peak.utils import average_peak_spectrum
+from ..peak.models import PreprocessedPeak
+from ..peak.utils import average_peak_spectrum
 
 
 def get_spectrum_correl_coef(peak, component):

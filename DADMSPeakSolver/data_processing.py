@@ -6,10 +6,10 @@ import os
 from decimal import Decimal, ROUND_HALF_UP
 from netCDF4 import Dataset
 
-import initialize as init
-import create_file
-import data_processing_dad as dpr_dad
-import ms_deconvolution as msd
+from . import initialize as init
+from . import create_file
+from . import data_processing_dad as dpr_dad
+from . import ms_deconvolution as msd
 
 def process_deconvoluted_peak(ms_spectrum, mass_range_decon, dad_spectrum, method, settings):
     """

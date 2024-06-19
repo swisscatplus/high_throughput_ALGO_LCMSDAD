@@ -1,20 +1,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import initialize as init
+from . import initialize as init
 import os
 from netCDF4 import Dataset
 from scipy.signal import savgol_filter
 
-from mocca.user_interaction.campaign import HplcDadCampaign
-from mocca.user_interaction.user_objects import Gradient
-from mocca.user_interaction.user_objects import Compound
-from mocca.user_interaction.user_objects import InternalStandard
-from mocca.user_interaction.user_objects import HplcInput
-from mocca.user_interaction.settings import Settings
-from mocca.dad_data.models import ParafacData
-
-from mocca.report.main import report
+from .mocca.user_interaction.campaign import HplcDadCampaign
+from .mocca.user_interaction.user_objects import Gradient
+from .mocca.user_interaction.user_objects import Compound
+from .mocca.user_interaction.user_objects import InternalStandard
+from .mocca.user_interaction.user_objects import HplcInput
+from .mocca.user_interaction.settings import Settings
+from .mocca.dad_data.models import ParafacData
 
 
 current_directory = os.getcwd()

@@ -1,10 +1,10 @@
 import os
 from netCDF4 import Dataset
 import pandas as pd
-import data_processing as dpr
-import data_processing_dad as dpr_dad
-import initialize as init
-import output_files as out_files
+from . import data_processing as dpr
+from . import data_processing_dad as dpr_dad
+from . import initialize as init
+from . import output_files as out_files
 import numpy as np
 
 def determine_best_runs(peak_path):

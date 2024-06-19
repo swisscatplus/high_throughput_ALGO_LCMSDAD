@@ -6,7 +6,7 @@ Created on Tue Dec 14 15:30:29 2021
 @author: haascp
 """
 
-from mocca.peak.models import CorrectedPeak
+from ..peak.models import CorrectedPeak
 
 
 def correct_offset(integrated_peak, istd_peaks, offset):

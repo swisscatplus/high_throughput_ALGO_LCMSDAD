@@ -8,8 +8,8 @@ Created on Tue Dec  7 10:57:23 2021
 
 import numpy as np
 
-from mocca.peak.models import IntegratedPeak
-from mocca.peak.utils import get_peak_data
+from ..peak.models import IntegratedPeak
+from ..peak.utils import get_peak_data
 
 
 def integrate_peak(checked_peak):

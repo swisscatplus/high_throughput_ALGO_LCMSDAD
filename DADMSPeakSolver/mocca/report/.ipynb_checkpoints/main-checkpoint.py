@@ -5,15 +5,15 @@ Created on Wed May 25 08:39:04 2022
 @author: HaasCP
 """
 
-from mocca.report.hplc_input import report_hplc_input
-from mocca.report.gradient import report_gradients
-from mocca.report.chroms import report_chroms
-from mocca.report.bad_chroms import report_bad_chroms
-from mocca.report.results import report_runs
-from mocca.report.peaks import report_peaks
-from mocca.report.quali_comps import report_quali_comps
-from mocca.report.quant_comps import report_quant_comps
-from mocca.report.parafac import report_parafac
+from ...report.hplc_input import report_hplc_input
+from ...report.gradient import report_gradients
+from ...report.chroms import report_chroms
+from ...report.bad_chroms import report_bad_chroms
+from ...report.results import report_runs
+from ...report.peaks import report_peaks
+from ...report.quali_comps import report_quali_comps
+from ...report.quant_comps import report_quant_comps
+from ...report.parafac import report_parafac
 
 
 def report(camp, export_path=''):

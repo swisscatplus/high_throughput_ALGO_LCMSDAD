@@ -7,7 +7,7 @@ Created on Tue Dec  7 13:22:39 2021
 @author: haascp
 """
 
-from mocca.chromatogram.utils import check_same_dataset
+from ..chromatogram.utils import check_same_dataset
 
 class Chromatogram():
     """

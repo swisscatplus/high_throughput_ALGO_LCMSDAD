@@ -8,10 +8,10 @@ Created on Fri Jan  7 18:05:10 2022
 import altair as alt
 import pandas as pd
 
-from mocca.peak.utils import get_peak_data
-from mocca.visualization.basic_plots import (plot_1D_layer, plot_1D_scatter_layer,
+from ..peak.utils import get_peak_data
+from ..visualization.basic_plots import (plot_1D_layer, plot_1D_scatter_layer,
                                              plot_1D_scatter)
-from mocca.dad_data.utils import sum_absorbance_by_time
+from ..dad_data.utils import sum_absorbance_by_time
 
 
 color_vals = ['red', 'steelblue', 'chartreuse', '#F4D03F', '#D35400', '#7D3C98']

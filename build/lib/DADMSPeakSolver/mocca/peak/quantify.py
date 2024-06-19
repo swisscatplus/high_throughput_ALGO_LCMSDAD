@@ -6,8 +6,8 @@ Created on Tue Jan  4 15:49:54 2022
 @author: haascp
 """
 
-from mocca.peak.models import ProcessedPeak
-from mocca.components.quant_funcs import get_integrate_wl_index, integrate_on_wl
+from ..peak.models import ProcessedPeak
+from ..components.quant_funcs import get_integrate_wl_index, integrate_on_wl
 
 
 def quantify_peak(peak, quant_comp_db, quali_comp_db):

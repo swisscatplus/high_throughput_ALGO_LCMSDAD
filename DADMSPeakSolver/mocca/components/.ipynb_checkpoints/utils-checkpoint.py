@@ -7,7 +7,7 @@ Created on Fri Dec  3 13:23:45 2021
 """
 import numpy as np
 
-from mocca.peak.utils import average_peak_spectrum
+from ...peak.utils import average_peak_spectrum
 
 
 def check_peaks_compound_id(peaks):

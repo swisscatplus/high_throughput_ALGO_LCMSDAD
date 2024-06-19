@@ -5,12 +5,12 @@ Created on Thu Dec  2 16:32:36 2021
 
 @author: haascp
 """
-from mocca.components.utils import (get_filtered_peaks,
+from ..components.utils import (get_filtered_peaks,
                                     get_filtered_peaks_by_compound,
                                     get_quant_peaks_by_compound)
 
-from mocca.components.quali_funcs import create_quali_component
-from mocca.components.quant_funcs import create_quant_component
+from ..components.quali_funcs import create_quali_component
+from ..components.quant_funcs import create_quant_component
 
 
 class BaseDatabase():

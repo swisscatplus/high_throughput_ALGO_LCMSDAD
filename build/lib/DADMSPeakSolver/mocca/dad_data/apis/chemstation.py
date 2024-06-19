@@ -8,7 +8,7 @@ Created on Wed Aug  4 15:28:24 2021
 import os
 import pandas as pd
 
-from mocca.dad_data.utils import df_to_array, apply_filter
+from ...dad_data.utils import df_to_array, apply_filter
 
 
 def read_csv_agilent(path):

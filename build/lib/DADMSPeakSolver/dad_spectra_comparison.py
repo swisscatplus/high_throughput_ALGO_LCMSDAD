@@ -4,9 +4,9 @@ import scipy as sc
 import math
 import matplotlib.pyplot as plt
 
-import initialize as init
-import data_processing
-import data_processing_dad as dpr_dad
+from . import initialize as init
+from . import data_processing
+from . import data_processing_dad as dpr_dad
 
 def comparison_dad(spectra_1, spectra_2, settings):
     """

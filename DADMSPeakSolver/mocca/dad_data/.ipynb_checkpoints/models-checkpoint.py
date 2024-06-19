@@ -11,16 +11,16 @@ from typing import List
 import numpy as np
 import copy
 
-from mocca.dad_data.utils import trim_data
-from mocca.dad_data.process_gradientdata import bsl_als
-from mocca.dad_data.apis.chemstation import read_chemstation
-from mocca.dad_data.apis.labsolutions import read_labsolutions
-from mocca.dad_data.apis.empower import read_empower
-from mocca.dad_data.apis.allotrope import read_adf
-from mocca.dad_data.apis.custom import read_custom_data
-from mocca.dad_data.apis.angi import read_angi
+from ...dad_data.utils import trim_data
+from ...dad_data.process_gradientdata import bsl_als
+from ...dad_data.apis.chemstation import read_chemstation
+from ...dad_data.apis.labsolutions import read_labsolutions
+from ...dad_data.apis.empower import read_empower
+from ...dad_data.apis.allotrope import read_adf
+from ...dad_data.apis.custom import read_custom_data
+from ...dad_data.apis.angi import read_angi
 
-import mocca.peak.models
+from ...peak import models
 
 
 @dataclass()

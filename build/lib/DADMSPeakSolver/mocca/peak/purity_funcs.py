@@ -6,7 +6,7 @@ Created on Tue Nov 23 15:55:25 2021
 @author: haascp
 """
 
-from mocca.peak.utils import get_peak_data, is_unimodal
+from ..peak.utils import get_peak_data, is_unimodal
 
 import numpy as np
 from sklearn.decomposition import PCA

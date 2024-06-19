@@ -9,17 +9,17 @@ import logging
 import dill
 
 # init of campign instance
-from mocca.peak.database import PeakDatabase
-from mocca.components.databases import QualiComponentDatabase
-from mocca.components.databases import QuantComponentDatabase
+from ...peak.database import PeakDatabase
+from ...components.databases import QualiComponentDatabase
+from ...components.databases import QuantComponentDatabase
 
 # process functions
-from mocca.campaign.process_funcs import process_compound_experiments
-from mocca.campaign.process_funcs import process_experiments
-from mocca.campaign.process_funcs import process_gradients
+from ...campaign.process_funcs import process_compound_experiments
+from ...campaign.process_funcs import process_experiments
+from ...campaign.process_funcs import process_gradients
 
 # reporting
-from mocca.report.main import report
+from ...report.main import report
 
 
 class HplcDadCampaign():

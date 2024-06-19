@@ -9,8 +9,8 @@ import os
 import pandas as pd
 import datapane as dp
 
-from mocca.visualization.calibration_plots import plot_calibration_curves
-from mocca.report.peaks import peaks_to_df
+from ...visualization.calibration_plots import plot_calibration_curves
+from ...report.peaks import peaks_to_df
 
 
 def get_max_score_version(comp):

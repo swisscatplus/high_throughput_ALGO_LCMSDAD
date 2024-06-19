@@ -1,7 +1,7 @@
 import os
-import output_files as out_files
-import output_visualization as out_vis
-import output_analytics as out_an
+from . import output_files as out_files
+from . import output_visualization as out_vis
+from . import output_analytics as out_an
 import datapane as dp
 import altair as alt
 # dp.enable_logging()

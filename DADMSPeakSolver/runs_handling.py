@@ -1,8 +1,8 @@
 import os
-import combine_ms_dad as dadms
-import initialize as init
-import signal_peak_handling as sp_handling
-import databank_handling as dtb
+from . import combine_ms_dad as dadms
+from . import initialize as init
+from . import signal_peak_handling as sp_handling
+from . import databank_handling as dtb
 
 def analyse_single_run(run_name, method_name, background_name, settings):
     """

@@ -8,7 +8,7 @@ Created on Fri Jan  7 15:12:02 2022
 import pandas as pd
 import altair as alt
 
-from mocca.dad_data.utils import sum_absorbance_by_time
+from ..dad_data.utils import sum_absorbance_by_time
 
 
 def plot_chrom_with_peaks(chrom):

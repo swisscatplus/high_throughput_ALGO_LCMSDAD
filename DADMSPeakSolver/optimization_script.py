@@ -3,9 +3,9 @@ import csv
 import json
 import pandas as pd
 import numpy as np
-from databank_handling import load_dtb_entry
-import ms_spectra_comparison as ms_comp
-import dad_spectra_comparison as dad_comp
+from .databank_handling import load_dtb_entry
+from . import ms_spectra_comparison as ms_comp
+from . import dad_spectra_comparison as dad_comp
 from matplotlib import pyplot as plt
 import seaborn as sns
 

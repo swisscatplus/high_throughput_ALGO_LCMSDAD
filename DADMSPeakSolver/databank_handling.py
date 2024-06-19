@@ -1,13 +1,13 @@
-import initialize as init
+from . import initialize as init
 import os
 from netCDF4 import Dataset
 import pandas as pd
 
-import data_processing
-import data_processing_dad as dpr_dad
-import ms_spectra_comparison as ms_comp
-import signal_peak_handling as sp_handling
-import dad_spectra_comparison as dad_comp
+from . import data_processing
+from . import data_processing_dad as dpr_dad
+from . import ms_spectra_comparison as ms_comp
+from . import signal_peak_handling as sp_handling
+from . import dad_spectra_comparison as dad_comp
 
 """
 Deal with file paths and spectra processing for all databank entries (for now only ms).

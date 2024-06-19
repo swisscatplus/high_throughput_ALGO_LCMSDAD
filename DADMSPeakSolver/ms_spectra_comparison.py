@@ -3,8 +3,8 @@ import numpy as np
 import scipy as sc
 import math
 
-import initialize as init
-import data_processing
+from . import initialize as init
+from . import data_processing
 
 
 

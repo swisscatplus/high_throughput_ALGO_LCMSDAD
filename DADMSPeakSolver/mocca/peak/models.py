@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
-import mocca.dad_data.models
+from ..dad_data import models
 
 
 @dataclass(frozen=True)

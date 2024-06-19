@@ -7,7 +7,7 @@ Created on Thu Dec  2 09:16:47 2021
 """
 import numpy as np
 
-from mocca.peak.models import PickedPeak
+from ..peak.models import PickedPeak
 
 
 # Peak processing functions

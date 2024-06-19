@@ -9,8 +9,8 @@ import os
 import pandas as pd
 import datapane as dp
 
-from mocca.visualization.basic_plots import plot_1D_data
-from mocca.report.peaks import peaks_to_df
+from ...visualization.basic_plots import plot_1D_data
+from ...report.peaks import peaks_to_df
 
 
 def quali_comps_to_df(comps):

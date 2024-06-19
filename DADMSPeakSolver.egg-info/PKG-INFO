@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: DADMSPeakSolver
-Version: 0.1.3
+Version: 0.1.15
 Summary: Program for the automated analysis and sample selection of high-throughout LC-DAD-MS data.
 Home-page: https://github.com/swisscatplus/high_throughput_ALGO_LCMSDAD
 Author: Leander Choudhury

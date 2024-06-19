@@ -8,7 +8,7 @@ Created on Thu May 12 09:10:57 2022
 import numpy as np
 import pandas as pd
 
-from mocca.dad_data.utils import df_to_array, apply_filter
+from ...dad_data.utils import df_to_array, apply_filter
 
 
 def get_uvvis_dataset_name(path):

@@ -7,7 +7,7 @@ Created on 06/13/22
 """
 import pandas as pd
 
-from mocca.dad_data.utils import df_to_array, apply_filter
+from ...dad_data.utils import df_to_array, apply_filter
 
 
 def read_csv_angi(path):

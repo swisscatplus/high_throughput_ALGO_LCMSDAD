@@ -1,13 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
-import hdbscan
 import pandas as pd
 from scipy.signal import savgol_filter, find_peaks, find_peaks_cwt
 from scipy.optimize import curve_fit, root_scalar
 from scipy.stats import skewnorm
 from scipy.integrate import quad
-import ms_spectra_comparison
+from . import ms_spectra_comparison
 import pywt
 import tensorly as tl
 from tensorly.decomposition import non_negative_parafac

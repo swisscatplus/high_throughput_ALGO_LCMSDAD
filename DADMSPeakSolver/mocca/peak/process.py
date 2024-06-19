@@ -5,7 +5,7 @@ Created on Fri Dec 17 11:03:08 2021
 
 @author: haascp
 """
-from mocca.peak.models import ProcessedPeak
+from ..peak.models import ProcessedPeak
 
 
 def process_peak(peak, compound, is_compound=False):

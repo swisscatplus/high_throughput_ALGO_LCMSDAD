@@ -7,8 +7,8 @@ Created on Fri Jan 14 08:59:36 2022
 """
 import numpy as np
 
-from mocca.peak.models import CorrectedPeak, IntegratedPeak
-from mocca.dad_data.models import ParafacData
+from ..peak.models import CorrectedPeak, IntegratedPeak
+from ..dad_data.models import ParafacData
 
 
 def create_pure_peak(impure_peak):

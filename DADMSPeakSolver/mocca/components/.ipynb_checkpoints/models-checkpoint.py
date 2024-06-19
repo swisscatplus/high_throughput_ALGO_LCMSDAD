@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from mocca.peak.models import ProcessedPeak
+from ...peak.models import ProcessedPeak
 
 
 @dataclass

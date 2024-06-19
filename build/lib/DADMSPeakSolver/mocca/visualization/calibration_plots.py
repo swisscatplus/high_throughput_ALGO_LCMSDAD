@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import altair as alt
 
-from mocca.visualization.utils import round_to_n
+from ..visualization.utils import round_to_n
 
 
 def plot_calibration_curves(comp):

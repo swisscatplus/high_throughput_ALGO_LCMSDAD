@@ -1,6 +1,6 @@
-import data_processing_dad as dpr_dad
-import data_processing as dpr
-import ms_deconvolution as msd
+from . import data_processing_dad as dpr_dad
+from . import data_processing as dpr
+from . import ms_deconvolution as msd
 import numpy as np
 from collections import Counter
 

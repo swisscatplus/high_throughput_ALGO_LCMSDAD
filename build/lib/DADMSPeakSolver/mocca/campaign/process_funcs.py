@@ -6,19 +6,19 @@ Created on Wed Dec 22 10:43:13 2021
 @author: haascp
 """
 
-from mocca.dad_data.models import CompoundData, GradientData
-from mocca.dad_data.process_funcs import pick_peaks
+from ..dad_data.models import CompoundData, GradientData
+from ..dad_data.process_funcs import pick_peaks
 
-from mocca.chromatogram.preprocessor import preprocess_chromatogram
-from mocca.chromatogram.assign import (assign_peaks_compound,
+from ..chromatogram.preprocessor import preprocess_chromatogram
+from ..chromatogram.assign import (assign_peaks_compound,
                                        reassign_impurities,
                                        assign_peaks_react)
-from mocca.chromatogram.quantify import quantify_peaks
+from ..chromatogram.quantify import quantify_peaks
 
-from mocca.campaign.utils import check_istd
-from mocca.campaign.experiment_funcs import (get_sorted_compound_experiments,
+from ..campaign.utils import check_istd
+from ..campaign.experiment_funcs import (get_sorted_compound_experiments,
                                              get_unprocessed_experiments)
-from mocca.user_interaction.user_objects import HplcInput
+from ..user_interaction.user_objects import HplcInput
 from matplotlib import pyplot as plt
 
 

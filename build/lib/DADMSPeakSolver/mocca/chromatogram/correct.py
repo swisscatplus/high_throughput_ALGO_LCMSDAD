@@ -7,11 +7,11 @@ Created on Fri Dec 10 10:54:24 2021
 """
 import copy
 
-from mocca.peak.match import get_filtered_similarity_dicts
-from mocca.peak.correct import correct_offset
-from mocca.peak.models import IstdPeak
-from mocca.decomposition.utils import check_comp_overlap
-from mocca.decomposition.iterative_parafac import iterative_parafac
+from ..peak.match import get_filtered_similarity_dicts
+from ..peak.correct import correct_offset
+from ..peak.models import IstdPeak
+from ..decomposition.utils import check_comp_overlap
+from ..decomposition.iterative_parafac import iterative_parafac
 
 
 def get_pure_istd_peak(chromatogram, istd_key, quali_component_db,

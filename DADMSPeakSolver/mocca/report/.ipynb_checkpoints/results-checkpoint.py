@@ -10,7 +10,7 @@ import os
 import pandas as pd
 import datapane as dp
 
-from mocca.visualization.basic_plots import plot_1D_scatter
+from ...visualization.basic_plots import plot_1D_scatter
 
 
 def chroms_to_results(chroms, quali_comp_db):

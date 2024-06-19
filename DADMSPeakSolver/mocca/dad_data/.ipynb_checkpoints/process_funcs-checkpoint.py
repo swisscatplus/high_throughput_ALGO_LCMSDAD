@@ -1,11 +1,11 @@
 import numpy as np
 from scipy.signal import find_peaks, peak_widths
 
-from mocca.peak.models import BasePeak, PickedPeak
-from mocca.chromatogram.model import Chromatogram
-from mocca.chromatogram.utils import check_overlap
+from ...peak.models import BasePeak, PickedPeak
+from ...chromatogram.model import Chromatogram
+from ...chromatogram.utils import check_overlap
 
-from mocca.dad_data.utils import sum_absorbance_by_time
+from ...dad_data.utils import sum_absorbance_by_time
 
 
 def get_peak_locs(summed_data):

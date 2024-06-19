@@ -9,8 +9,8 @@ Created on Thu Dec  2 09:16:47 2021
 import numpy as np
 import matplotlib.pyplot as plt
 
-from mocca.peak.models import CheckedPeak
-from mocca.peak.purity_funcs import (get_trimmed_peak_data, get_max_loc,
+from ..peak.models import CheckedPeak
+from ..peak.purity_funcs import (get_trimmed_peak_data, get_max_loc,
                                      get_noise_variance, get_correls,
                                      get_agilent_thresholds,
                                      get_purity_value_agilent,

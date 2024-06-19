@@ -7,10 +7,10 @@ Created on Fri Dec  3 09:54:04 2021
 """
 from scipy.signal import find_peaks
 
-from mocca.components.utils import (check_peaks_compound_id,
+from ...components.utils import (check_peaks_compound_id,
                                     average_ret_times_over_peaks,
                                     average_spectra_over_peaks)
-from mocca.components.models import QualiComponent
+from ...components.models import QualiComponent
 
 
 def get_absorbance_maxima(spectrum):

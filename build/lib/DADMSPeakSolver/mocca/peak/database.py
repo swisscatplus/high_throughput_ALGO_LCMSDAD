@@ -6,7 +6,7 @@ Created on Fri Nov 26 08:28:12 2021
 @author: haascp
 """
 
-from mocca.peak.models import ProcessedPeak
+from ..peak.models import ProcessedPeak
 
 import logging
 from typing import Optional, List

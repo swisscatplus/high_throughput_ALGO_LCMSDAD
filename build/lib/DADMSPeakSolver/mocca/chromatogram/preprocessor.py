@@ -6,14 +6,14 @@ Created on Tue Dec 14 16:08:40 2021
 @author: haascp
 """
 
-from mocca.peak.expand import expand_peak
-from mocca.peak.check import check_peak
-from mocca.peak.integrate import integrate_peak
-from mocca.chromatogram.correct import correct_istd_offset
-from mocca.decomposition.utils import check_any_compound_overlap
-from mocca.decomposition.utils import check_absorbance_thresh
-from mocca.decomposition.iterative_parafac import iterative_parafac
-from mocca.peak.match import match_peak
+from ..peak.expand import expand_peak
+from ..peak.check import check_peak
+from ..peak.integrate import integrate_peak
+from ..chromatogram.correct import correct_istd_offset
+from ..decomposition.utils import check_any_compound_overlap
+from ..decomposition.utils import check_absorbance_thresh
+from ..decomposition.iterative_parafac import iterative_parafac
+from ..peak.match import match_peak
 
 
 def preprocess_chromatogram(chromatogram, quali_comp_db,

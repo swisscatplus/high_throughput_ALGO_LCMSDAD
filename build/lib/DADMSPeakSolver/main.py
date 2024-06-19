@@ -1,27 +1,27 @@
-import initialize as init
+from . import initialize as init
 import os
 import time
 
-import data_processing
-import databank_handling as dtb
-import create_file
-import ms_spectra_comparison
+from . import data_processing
+from . import databank_handling as dtb
+from . import create_file
+from . import ms_spectra_comparison
 import numpy as np
 import pandas as pd
 from scipy.signal import savgol_filter, find_peaks_cwt, find_peaks
 import scipy.stats
-import signal_peak_handling as sp_handling
-import data_processing_dad as dpr_dad
-import dad_spectra_comparison as dad_comp
+from . import signal_peak_handling as sp_handling
+from . import data_processing_dad as dpr_dad
+from . import dad_spectra_comparison as dad_comp
 from matplotlib import pyplot as plt
 import seaborn as sns
-import ms_deconvolution as msd
+from . import ms_deconvolution as msd
 import pywt
 from datetime import datetime
-import combine_ms_dad as dadms
-import runs_handling as runs
-import output as out
-import optimization_script as opt_sc
+from . import combine_ms_dad as dadms
+from . import runs_handling as runs
+from . import output as out
+from . import optimization_script as opt_sc
 
 # Go back directories until we have project folder
 current_directory = os.getcwd()
@@ -112,8 +112,8 @@ def new_dtb_entry(peak_folder, peak_name, molecule):
     :param peak_name: Name of the peak file to be transferred into the database.
     :param molecule: Name of the molecule (IUPAC).
     """
-    peak_path = os.path.join(directory_project, "Data_examples", "Peak_files", peak_folder, peak_name)
-    create_file.create_dtb_entry(directory_project, peak_path, molecule)
+    peak_path = os.path.join(settings["directory_project"], "Data_examples", "Peak_files", peak_folder, peak_name)
+    create_file.create_dtb_entry(settings["directory_project"], peak_path, molecule)
     return
 
 def analyse_run_folder(run_folder, background_run, method_name, create_report = True, report_name = None):
@@ -125,10 +125,10 @@ def analyse_run_folder(run_folder, background_run, method_name, create_report = 
     :param report_name: Name of the report file. Default is the name of the run + _Report.
     """
 
-    background_filepath = os.path.join(directory_project, "Data_examples", "testfiles", background_run)
+    background_filepath = os.path.join(settings["directory_project"], "Data_examples", "testfiles", background_run)
     data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
-    run_folder_filepath = os.path.join(directory_project, "Data_examples", "testfiles", run_folder)
+    run_folder_filepath = os.path.join(settings["directory_project"], "Data_examples", "testfiles", run_folder)
     runs.analyse_multiple_runs(run_folder_filepath, method_name, background_method, settings)
 
     if create_report:
@@ -143,6 +143,6 @@ def save_background_method(background_run, method_name):
     :param background_run: Name of the background run used (ASM file type).
     :param method_name: Name of the new method.
     """
-    background_filepath = os.path.join(directory_project, "Data_examples", "testfiles", background_run)
-    data_processing.create_new_background_spectra(background_filepath,method_name, settings)
+    background_filepath = os.path.join(settings["directory_project"], "Data_examples", "testfiles", background_run)
+    data_processing.create_new_background_spectra(background_filepath, method_name, settings)
     return

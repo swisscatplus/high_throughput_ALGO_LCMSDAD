@@ -9,12 +9,12 @@ import os
 import pandas as pd
 import datapane as dp
 
-from mocca.peak.models import ProcessedPeak
-from mocca.visualization.basic_plots import plot_1D_data
-from mocca.visualization.results_plot import plot_chrom_with_peaks
-from mocca.report.utils import settings_to_df
-from mocca.report.hplc_input import exps_to_df
-from mocca.peak.utils import average_peak_spectrum
+from ...peak.models import ProcessedPeak
+from ...visualization.basic_plots import plot_1D_data
+from ...visualization.results_plot import plot_chrom_with_peaks
+from ...report.utils import settings_to_df
+from ...report.hplc_input import exps_to_df
+from ...peak.utils import average_peak_spectrum
 
 
 def chroms_to_df(chroms):
