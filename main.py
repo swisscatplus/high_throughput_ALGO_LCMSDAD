@@ -64,7 +64,7 @@ settings = {
     "method_name": "AceticAcid01",
     "Number Columns": 8,  # Number for columns for heatmap visualization
 }
-method_name = "AceticAcid01"
+method_name = "new_method"
 background_method = "defaultNew"
 
 """
