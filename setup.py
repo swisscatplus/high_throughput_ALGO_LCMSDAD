@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='DADMSPeakSolver',
-    version='0.1.0',
+    version='0.1.3',
     author='Leander Choudhury',
     author_email='leander.choudhury@epfl.ch',
     description='Program for the automated analysis and sample selection of high-throughout LC-DAD-MS data.',
@@ -17,7 +17,7 @@ setup(
     ],
     python_requires='>=3.12',  # Specify the required Python version
     install_requires=[
-        'numpy==2.0.0',
+        'numpy==1.26.4',
         'pandas==1.5.3',
         'scipy==1.13.1',
         'matplotlib==3.8.4',
@@ -33,7 +33,6 @@ setup(
         'dill==0.3.8',
         'h5py==3.11.0',
         'importlib_metadata==7.1.0',
-        'mocca==0.1.2',
         'rdflib==7.0.0',
         'Pillow==10.3.0',
     ],

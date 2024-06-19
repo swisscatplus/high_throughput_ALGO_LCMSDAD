@@ -15,7 +15,6 @@ import data_processing_dad as dpr_dad
 import dad_spectra_comparison as dad_comp
 from matplotlib import pyplot as plt
 import seaborn as sns
-from sklearn.datasets import make_blobs
 import ms_deconvolution as msd
 import pywt
 from datetime import datetime
@@ -60,7 +59,7 @@ settings = {
     "retention_time_interval": 10.,  # Time interval to accept equal retention time. To be optimised.
     "directory_project": directory_project,  # Later change this everywhere for more convenience.
     "peak_folder_time": now.strftime("%Y-%m-%d_%H-%M-%S"),
-    "ion_detection_mode": "negative",  # positive or negative
+    "ion_detection_mode": "positive",  # positive or negative
     "method_name": "AceticAcid01",
     "Number Columns": 8,  # Number for columns for heatmap visualization
 }
@@ -147,6 +146,3 @@ def save_background_method(background_run, method_name):
     background_filepath = os.path.join(directory_project, "Data_examples", "testfiles", background_run)
     data_processing.create_new_background_spectra(background_filepath,method_name, settings)
     return
-
-analyse_run_folder("screening_suzuki", "240611_synthese_Leander_2024-06-11_16-38-22+02-00-01.json", "AceticAcid01", True, "test23")
-
