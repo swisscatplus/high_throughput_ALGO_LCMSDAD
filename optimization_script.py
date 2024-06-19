@@ -293,7 +293,7 @@ def comparison_dtb_named_files(settings, processed = True):
     lower_limit_ft_range = range(0, 30, 5)
     upper_limit_ft_range = range(25, 500, 25)
 
-    """for folder in analyte_folders:
+    for folder in analyte_folders:
         csv_filename = "ms_optimization_" + folder + str(processed) + ".csv"
         csv_filepath = os.path.join(settings["directory_project"], "Data_examples", csv_filename)
         with open(csv_filepath, "w", newline="") as csvfile:
@@ -313,7 +313,7 @@ def comparison_dtb_named_files(settings, processed = True):
                         file_headings[3]: json.dumps(scores[2]),
                         file_headings[4]: json.dumps(scores[3]),
                         file_headings[5]: json.dumps(scores[4])
-                    })"""
+                    })
     print("Done with MS")
     for folder in analyte_folders:
         csv_filename = "dad_optimization_" + folder + str(processed) + ".csv"
@@ -510,7 +510,7 @@ def compare_analyte_dtb_dad(analyte_folder, settings, processed = True):
                         sum_score += dad_comp.derivative_similarity(analyte_spectrum_dad, dtb_spectrum_dad, settings)
                         similarity_score = sum_score/4
                     else:
-                        raise SyntaxError("Error: Unknown comparison algorithm MS")
+                        raise SyntaxError("Error: Unknown comparison algorithm DAD")
 
                     if database_entry == peak_name:
                         true_similarity_score.append(similarity_score)

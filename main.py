@@ -24,14 +24,12 @@ import runs_handling as runs
 import output as out
 import optimization_script as opt_sc
 
-starttime = time.time()
 # Go back directories until we have project folder
 current_directory = os.getcwd()
 directory_project = os.path.abspath(os.path.join(current_directory, os.pardir))
-print(directory_project)
 
 # Go to background folder
-background_folder = os.path.join(directory_project, "Data_examples", "background_spectra")
+background_folder = os.path.join(directory_project, "Data_examples", "background_files")
 
 # define time stamp for peak folder name
 now = datetime.now()
@@ -66,160 +64,87 @@ settings = {
     "method_name": "AceticAcid01",
     "Number Columns": 8,  # Number for columns for heatmap visualization
 }
-print("Weighting function used for MS Spectra: " + settings["ms_weighting_fct"])
-method_name = "AceticAcid01"  # Change into settings later!
+method_name = "AceticAcid01"
 background_method = "defaultNew"
-print(time.time())
-
-
 
 """
----------------------------------------------------------
-This is the path to the analytical file directly from OpenLab.
----------------------------------------------------------
-"""
-directory_data = os.path.join(directory_project, "Data_examples", "20230907 145900")
-testpath = os.path.join(directory_data, "20230907 145900_MS1 +TIC SCAN ESI Frag=100V Gain=1-0_spectra.cdf")
-# Should go through a folder of multiple runs later.
+--------------------------------
+These functions need to be called directly by their origin: (write in documentation)
 
+runs.analyse_single_run(run_name, method_name, background_method, settings)
 
-
-
-"""
----------------------------------------------------------
-To create new background file, enter path here, change the name and uncomment the function.
----------------------------------------------------------
-"""
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   "240611_synthese_Leander_2024-06-11_16-38-22+02-00-01.JSON")
-# data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-
-
-
-
-"""
----------------------------------------------------------
-To create new database entry from an existing peak file, enter peak file path here and uncomment the function. Enter
-a molecule name. Should the function fail with the molecule name, enter the molecule smiles.
----------------------------------------------------------
-"""
-peak_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-04-12_14-38-45", "peak_2.cdf")
-# molecule_name = "Indoline"
-# create_file.create_dtb_entry(directory_project, peak_path, molecule_name)
-
-
-"""
----------------------------------------------------------
-To add method and retention time to existing database file, enter peak path and database file path here, then
-uncomment the function.
----------------------------------------------------------
-"""
-# peak_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-03-07_18-04-27", "peak_1.cdf")
-
-dtb_entry_path = os.path.join(directory_project, "Data_examples", "database", "HJKGBRPNSJADMB-UHFFFAOYSA-N.cdf")
-# create_file.add_method_to_dtb_entry(dtb_entry_path, peak_path)
-
-
-
-
-"""
----------------------------------------------------------
-Deal with peaks to be compared or whatever. Make sure to enter folder time stamp of latest change.
----------------------------------------------------------
-"""
-# Folder time stamp will later be automatised for a direct full comparison...
-
-peak_directory = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-16_14-15-23")
-
-# dtb.compare_all_peaks_dtb(peak_directory, settings)
-
-
-
-"""
----------------------------------------------------------
-Testing
----------------------------------------------------------
-"""
-dad_path = os.path.join(directory_project, "Data_examples", "test.txt")
-# init.import_dad_spectrum(dad_path)
-
-# extracted_ms.full_processing_ms(background_signal, settings)
-
-# data_processing.process_found_signal(full_analysis, peak_info, settings)
-# sp_handling.signal_comparison(settings)
-# dad_chr = dpr_dad.DAD_full_chr(full_analysis.dad_data3d, full_analysis.info)
-
-# dadms.assign_peaks(full_analysis, settings)
-# dad_comp.comparison_dad(extracted_dad, extracted_dad2, settings)
-
-run_name = "240611_synthese_Leander_2024-06-11_17-29-04+02-00-04.JSON"
-# runs.analyse_single_run(run_name, method_name, background_method, settings)
-
-run_folder_name = "screening_suzuki"
-# runs.analyse_multiple_runs(run_folder_name, method_name, background_method, settings)
-
-"""
-Testing superimposed ms peak deco
-"""
-# runs.delete_old_sgn_files(settings)
-json_path = os.path.join(directory_project, "Data_examples", "testfiles", run_name)
-
-# full_analysis = init.import_run_json(json_path, method=background_method)
-# ms_chr = data_processing.MS_full_chr(full_analysis.ms_data3d, full_analysis.info)
-# ms_peaks = msd.ms_create_peaks(full_analysis, ms_chr, settings)
-# ms_spectra = ms_chr.extract_single_ms(330)
-# ms_spectra.plot_spectra()
-
-# out.dtb_molecule_list(settings)
-# out.dtb_molecule_full_data("RCIJACVHOIKRAP-UHFFFAOYSA-M.cdf", settings)
-# out.create_analysis_report(settings, run_folder_name, report_name="screening_suzuki_negative")  # peak_folder="2024-04-22_15-43-35"
-# 2024-05-22_10-00-49
+out.dtb_molecule_list(settings)
+out.dtb_molecule_full_data("RCIJACVHOIKRAP-UHFFFAOYSA-M.cdf", settings)
+out.create_analysis_report(settings, run_folder_name, report_name="_")
 
 opt_sc.comparison_dtb_named_files(settings, False)
+opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_compTrue.csv", settings)
+opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_compFalse.csv", settings)
 
-# opt_sc.plot_optimization_dad("dad_optimization_peaks_dtb_compTrue.csv", settings)
-# opt_sc.plot_optimization_ms("ms_optimization_peaks_dtb_compFalse.csv", settings)
-
-
-"""peak_file_path = os.path.join(directory_project, "Data_examples", "Peak_files", "2024-06-16_14-15-23",
-                              "peak_3.cdf")
-out.plot_peak_data(peak_file_path, True)
-
-molecule_name = "Phenylboronic acid"
-create_file.create_dtb_entry(directory_project, peak_file_path, molecule_name)"""
-
-
-
-
+create_file.add_method_to_dtb_entry(dtb_entry_path, peak_path)
+create_file.create_dtb_entry(directory_project, peak_path, molecule)
 """
-Analyse molecules for dtb:
-"""
+def change_data_directory(new_directory_path):
+    """
+    Function to change the directory of the Data folder. Needs to be run before all other functions.
+    :param new_directory_path: Path to contain the "Data" folder, which includes the subordinate files.
+    """
+    directory_project = new_directory_path
+    settings["directory_project"] = directory_project
+    settings["background folder"] = os.path.join(directory_project, "Data_examples", "background_files")
+    return
 
+def custom_settings(new_settings):
+    """
+    Function to change settings and parameters. Needs to be run before the actual analysis function.
+    :param new_settings: Dictionary of all settings to be changed. The key needs to be the same as in the original settings.
+    """
+    for key in new_settings:
+        if key in settings:
+            settings[key] = new_settings[key]
+            print(f"Setting changed: {key} = {settings[key]}")
+    return
 
-"""timestamp_peakfolder = settings["peak_folder_time"]"""
+def new_dtb_entry(peak_folder, peak_name, molecule):
+    """
+    Function to create a new database entry. If the function fails due to the molecule name being unknown to PubChem,
+    the create_dtb_entry function needs to be called directly.
+    :param peak_folder: Name of the peak folder.
+    :param peak_name: Name of the peak file to be transferred into the database.
+    :param molecule: Name of the molecule (IUPAC).
+    """
+    peak_path = os.path.join(directory_project, "Data_examples", "Peak_files", peak_folder, peak_name)
+    create_file.create_dtb_entry(directory_project, peak_path, molecule)
+    return
 
+def analyse_run_folder(run_folder, background_run, method_name, create_report = True, report_name = None):
+    """
+    :param run_folder: Name of the run folder to be analysed
+    :param background_run: Name of the background run file to be used. Needs to be in the ASM format.
+    :param method_name: Name of the LC method used.
+    :param create_report: Option to create the report file. Default is true.
+    :param report_name: Name of the report file. Default is the name of the run + _Report.
+    """
 
+    background_filepath = os.path.join(directory_project, "Data_examples", "testfiles", background_run)
+    data_processing.create_new_background_spectra(background_filepath, background_method, settings)
 
-"""
----------------------------------------------------------------------------------------
+    run_folder_filepath = os.path.join(directory_project, "Data_examples", "testfiles", run_folder)
+    runs.analyse_multiple_runs(run_folder_filepath, method_name, background_method, settings)
 
+    if create_report:
+        if report_name is None:
+            report_name = run_folder + "_Report"
+        out.create_analysis_report(settings, run_folder, report_name=report_name)
+    return
 
-molecule_folder = "cloro-nitropyridine"
-background_file = "240419-screening_C18_acid_acetic-C-37.JSON"
+def save_background_method(background_run, method_name):
+    """
+    A function to create a background run file for a new method is used.
+    :param background_run: Name of the background run used (ASM file type).
+    :param method_name: Name of the new method.
+    """
+    background_filepath = os.path.join(directory_project, "Data_examples", "testfiles", background_run)
+    data_processing.create_new_background_spectra(background_filepath,method_name, settings)
+    return
 
-print(molecule_folder)
-settings["peak_folder_time"] = timestamp_peakfolder + molecule_folder
-background_filepath = os.path.join(directory_project, "Data_examples", "testfiles",
-                                   background_file)
-data_processing.create_new_background_spectra(background_filepath, background_method, settings)
-runs.analyse_multiple_runs(molecule_folder, method_name, background_method, settings)
-
----------------------------------------------------------------------------------------
-"""
-
-
-
-
-
-print(time.time())
-print(time.time()-starttime)
