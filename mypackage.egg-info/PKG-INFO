@@ -1,0 +1,36 @@
+Metadata-Version: 2.1
+Name: mypackage
+Version: 0.1.0
+Summary: Program for the automated analysis and sample selection of high-throughout LC-DAD-MS data.
+Home-page: https://github.com/swisscatplus/high_throughput_ALGO_LCMSDAD
+Author: Leander Choudhury
+Author-email: leander.choudhury@epfl.ch
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy==2.0.0
+Requires-Dist: pandas==1.5.3
+Requires-Dist: scipy==1.13.1
+Requires-Dist: matplotlib==3.8.4
+Requires-Dist: scikit_learn==1.4.2
+Requires-Dist: requests==2.31.0
+Requires-Dist: netCDF4==1.6.5
+Requires-Dist: rdkit==2023.9.5
+Requires-Dist: PyWavelets==1.6.0
+Requires-Dist: tensorly==0.8.1
+Requires-Dist: seaborn==0.13.2
+Requires-Dist: altair==5.3.0
+Requires-Dist: datapane==0.17.0
+Requires-Dist: dill==0.3.8
+Requires-Dist: h5py==3.11.0
+Requires-Dist: importlib_metadata==7.1.0
+Requires-Dist: mocca==0.1.2
+Requires-Dist: rdflib==7.0.0
+Requires-Dist: Pillow==10.3.0
+
+# high_throughput_ALGO_LCMSDAD
+
+ALGORITHME LEANDER pour High Throughput LCMS
