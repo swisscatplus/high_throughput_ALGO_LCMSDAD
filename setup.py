@@ -17,8 +17,25 @@ setup(
     ],
     python_requires='>=3.12',  # Specify the required Python version
     install_requires=[
-        'required_package1',
-        'required_package2',
+        'numpy==2.0.0',
+        'pandas==1.5.3',
+        'scipy==1.13.1',
+        'matplotlib==3.8.4',
+        'scikit_learn==1.4.2',
+        'requests==2.31.0',
+        'netCDF4==1.6.5',
+        'rdkit==2023.9.5',
+        'PyWavelets==1.6.0',
+        'tensorly==0.8.1',
+        'seaborn==0.13.2',
+        'altair==5.3.0',
+        'datapane==0.17.0',
+        'dill==0.3.8',
+        'h5py==3.11.0',
+        'importlib_metadata==7.1.0',
+        'mocca==0.1.2',
+        'rdflib==7.0.0',
+        'Pillow==10.3.0',
     ],
-    include_package_data=False,  # Include files from MANIFEST.in
+    include_package_data=False,
 )

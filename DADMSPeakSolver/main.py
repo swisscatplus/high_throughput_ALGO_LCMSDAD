@@ -29,7 +29,7 @@ current_directory = os.getcwd()
 directory_project = os.path.abspath(os.path.join(current_directory, os.pardir))
 
 # Go to background folder
-background_folder = os.path.join(directory_project, "Data_examples", "background_files")
+background_folder = os.path.join(directory_project, "Data_examples", "background_spectra")
 
 # define time stamp for peak folder name
 now = datetime.now()
@@ -91,7 +91,7 @@ def change_data_directory(new_directory_path):
     """
     directory_project = new_directory_path
     settings["directory_project"] = directory_project
-    settings["background folder"] = os.path.join(directory_project, "Data_examples", "background_files")
+    settings["background folder"] = os.path.join(directory_project, "Data_examples", "background_spectra")
     return
 
 def custom_settings(new_settings):
@@ -147,4 +147,6 @@ def save_background_method(background_run, method_name):
     background_filepath = os.path.join(directory_project, "Data_examples", "testfiles", background_run)
     data_processing.create_new_background_spectra(background_filepath,method_name, settings)
     return
+
+analyse_run_folder("screening_suzuki", "240611_synthese_Leander_2024-06-11_16-38-22+02-00-01.json", "AceticAcid01", True, "test23")
 
