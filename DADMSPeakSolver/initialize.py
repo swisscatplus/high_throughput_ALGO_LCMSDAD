@@ -211,45 +211,43 @@ def import_run_json(path, run_nr = str(1), method = None):
     measurement_document = data_deserialized["liquid chromatography aggregate document"]\
         ["liquid chromatography document"][0]["measurement aggregate document"]["measurement document"]
 
-    if measurement_document[3]["measurement identifier"] == "DAD1I":
-        dad_data3d = measurement_document[3]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
-        ms_data3d = measurement_document[4]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
-        if measurement_document[1]["measurement identifier"] == "ELS1A":
-            elsd_data = measurement_document[1]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
-            elsd_acquisition = True
-            plus_minus_acquisition = False
-        else:
-            elsd_acquisition = False
-            plus_minus_acquisition = True
-    elif measurement_document[2]["measurement identifier"] == "DAD1I":
-        dad_data3d = measurement_document[2]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
-        ms_data3d = measurement_document[3]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
-        plus_minus_acquisition = False
-        elsd_acquisition = False
-    elif measurement_document[4]["measurement identifier"] == "DAD1I":
-        dad_data3d = measurement_document[4]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
-        ms_data3d = measurement_document[5]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
-        if measurement_document[2]["measurement identifier"] == "ELS1A":
-            elsd_data = measurement_document[1]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
-            elsd_acquisition = True
-            plus_minus_acquisition = False
-        elif measurement_document[1]["measurement identifier"] == "ELS1A":
-            elsd_data = measurement_document[1]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
-            elsd_acquisition = True
-            plus_minus_acquisition = True
-        else:
-            elsd_acquisition = False
-            plus_minus_acquisition = True
-    elif measurement_document[5]["measurement identifier"] == "DAD1I":
-        dad_data3d = measurement_document[5]["three-dimensional ultraviolet spectrum data cube"]["data"]  # path for 3d dad
-        ms_data3d = measurement_document[6]["three-dimensional mass spectrum data cube"]["data"]  # path for 3d ms data
-        plus_minus_acquisition = True
-        if measurement_document[2]["measurement identifier"] == "ELS1A":
-            elsd_data = measurement_document[2]["chromatogram data cube"]["data"]  # path for ELSD data (for later)
-            elsd_acquisition = True
+    dad_measurement = None
+    ms_3d_measurement = None
+    elsd_measurement = None
+    positive_tic_measurement = None
+    negative_tic_measurement = None
+
+    for measurement in measurement_document:
+        measurement_identifier = measurement.get("measurement identifier", "")
+        if "three-dimensional ultraviolet spectrum data cube" in measurement:
+            dad_measurement = measurement
+        if "three-dimensional mass spectrum data cube" in measurement:
+            ms_3d_measurement = measurement
+        if measurement_identifier == "ELS1A":
+            elsd_measurement = measurement
+        if "+TIC" in measurement_identifier:
+            positive_tic_measurement = measurement
+        if "-TIC" in measurement_identifier:
+            negative_tic_measurement = measurement
+
+    if dad_measurement is None:
+        raise KeyError("No 3D DAD data cube found in the JSON export.")
+
+    dad_data3d = dad_measurement["three-dimensional ultraviolet spectrum data cube"]["data"]
+    elsd_acquisition = elsd_measurement is not None
+    plus_minus_acquisition = (
+        positive_tic_measurement is not None and negative_tic_measurement is not None
+    )
+
+    if ms_3d_measurement is not None:
+        ms_data3d = ms_3d_measurement["three-dimensional mass spectrum data cube"]["data"]
+    elif positive_tic_measurement is not None or negative_tic_measurement is not None:
+        ms_data3d = _build_ms_data3d_from_tic(
+            positive_tic_measurement,
+            negative_tic_measurement,
+        )
     else:
-        raise KeyError("The structure of the data file doesn't align with initialize."
-                       "Investigate the location of the 3D data cubes.")
+        raise KeyError("No MS data found in the JSON export.")
 
     # first parse the 3D ms data
     chromatogram_ms = np.empty((len(ms_data3d), 2))  # Initialize array for data.
@@ -302,8 +300,52 @@ def import_run_json(path, run_nr = str(1), method = None):
     info["Name"] = measurement_document[0]["sample document"]["written name"]
 
     info["plus_minus_acq"] = plus_minus_acquisition
+    info["elsd_acq"] = elsd_acquisition
     # raise SystemExit  # For testing initialize only
     return full_analysis(full_chromatogram_ms, full_chromatogram_dad, info)
+
+
+def _build_ms_data3d_from_tic(positive_tic_measurement=None, negative_tic_measurement=None):
+    """
+    Build a synthetic MS 3D structure from TIC chromatograms when no full MS cube is present.
+    This keeps the legacy pipeline operational on newer ASM exports that only contain TIC traces.
+    """
+    scans = []
+
+    if positive_tic_measurement is not None and negative_tic_measurement is not None:
+        positive_data = positive_tic_measurement["chromatogram data cube"]["data"]
+        negative_data = negative_tic_measurement["chromatogram data cube"]["data"]
+        positive_times = positive_data["dimensions"][0]
+        negative_times = negative_data["dimensions"][0]
+        positive_values = positive_data["measures"][0]
+        negative_values = negative_data["measures"][0]
+
+        scan_count = min(len(positive_times), len(negative_times))
+        for i in range(scan_count):
+            scans.append({
+                "time": positive_times[i],
+                "dimensions": [[0.0]],
+                "measures": [[positive_values[i]]],
+            })
+            scans.append({
+                "time": negative_times[i],
+                "dimensions": [[0.0]],
+                "measures": [[negative_values[i]]],
+            })
+        return scans
+
+    tic_measurement = positive_tic_measurement if positive_tic_measurement is not None else negative_tic_measurement
+    tic_data = tic_measurement["chromatogram data cube"]["data"]
+    times = tic_data["dimensions"][0]
+    values = tic_data["measures"][0]
+
+    for i in range(len(times)):
+        scans.append({
+            "time": times[i],
+            "dimensions": [[0.0]],
+            "measures": [[values[i]]],
+        })
+    return scans
 
 class full_analysis:
     """
